@@ -1,0 +1,24 @@
+node_modules/
+
+# Build output and caches
+dist/
+.astro/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Deployment and local platform state
+.wrangler/
+.netlify/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
