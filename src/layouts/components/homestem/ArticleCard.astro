@@ -1,0 +1,83 @@
+---
+import Badge from "@/components/homestem/Badge.astro";
+
+export interface Props {
+  title: string;
+  slug: string;
+  image: string;
+  imageAlt: string;
+  category: string;
+  excerpt?: string;
+  readTime?: string;
+}
+const { title, slug, image, imageAlt, category, excerpt, readTime } =
+  Astro.props;
+const label = category.replace(/-/g, " ");
+---
+
+<a href={`/${slug}`} class="hs-acard hs-card">
+  <div class="hs-acard__media">
+    <img src={image} alt={imageAlt} width="400" height="267" loading="lazy" />
+  </div>
+  <div class="hs-acard__body">
+    <div class="hs-acard__meta">
+      <Badge label={label} />
+      {readTime && <span class="hs-acard__readtime">{readTime}</span>}
+    </div>
+    <h3 class="hs-acard__title">{title}</h3>
+    {excerpt && <p class="hs-acard__excerpt">{excerpt}</p>}
+  </div>
+</a>
+
+<style>
+  .hs-acard {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+  .hs-acard:hover {
+    border-color: var(--color-primary-light);
+  }
+  .hs-acard__media {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+  }
+  .hs-acard__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hs-acard__body {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .hs-acard__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .hs-acard__readtime {
+    font: var(--type-label-sm);
+    color: var(--color-text-muted);
+  }
+  .hs-acard__readtime::before {
+    content: "·";
+    margin-right: var(--space-2);
+  }
+  .hs-acard__title {
+    font-size: var(--font-size-label-lg);
+    margin: 0;
+    line-height: var(--line-height-tight);
+  }
+  .hs-acard__excerpt {
+    font-size: var(--font-size-label);
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>

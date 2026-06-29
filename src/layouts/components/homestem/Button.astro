@@ -1,0 +1,27 @@
+---
+// Generic (non-affiliate) button/link. For Amazon CTAs use AffiliateLink.
+export interface Props {
+  href?: string;
+  label?: string;
+  variant?: "primary" | "outline";
+  block?: boolean;
+  class?: string;
+  [key: string]: any;
+}
+const {
+  href,
+  label,
+  variant = "primary",
+  block = false,
+  class: className,
+  ...rest
+} = Astro.props;
+const cls = `hs-btn hs-btn--${variant}${block ? " hs-btn--block" : ""}${
+  className ? ` ${className}` : ""
+}`;
+const Tag = href ? "a" : "button";
+---
+
+<Tag class={cls} {...href ? { href } : {}} {...rest}>
+  {label}<slot />
+</Tag>

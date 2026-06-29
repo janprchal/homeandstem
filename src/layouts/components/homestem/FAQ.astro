@@ -1,0 +1,71 @@
+---
+// FAQ accordion (native <details>) + schema.org FAQPage JSON-LD. Google accepts
+// JSON-LD adjacent to the content it describes. Answers are plain text only.
+export interface Props {
+  items: Array<{ question: string; answer: string }>;
+  heading?: string;
+}
+const { items, heading = "Frequently Asked Questions" } = Astro.props;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: items.map((i) => ({
+    "@type": "Question",
+    name: i.question,
+    acceptedAnswer: { "@type": "Answer", text: i.answer },
+  })),
+};
+---
+
+<section class="hs-faq" aria-label={heading}>
+  <h2>{heading}</h2>
+  {
+    items.map((i) => (
+      <details class="hs-faq__item">
+        <summary>{i.question}</summary>
+        <p>{i.answer}</p>
+      </details>
+    ))
+  }
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+</section>
+
+<style>
+  .hs-faq {
+    margin-block: var(--space-7);
+  }
+  .hs-faq__item {
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-4) 0;
+  }
+  .hs-faq__item summary {
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .hs-faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .hs-faq__item summary::after {
+    content: "+";
+    color: var(--color-primary);
+    font-size: var(--font-size-h3);
+    line-height: 1;
+  }
+  .hs-faq__item[open] summary::after {
+    content: "−";
+  }
+  .hs-faq__item p {
+    margin: var(--space-3) 0 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-label-lg);
+  }
+</style>

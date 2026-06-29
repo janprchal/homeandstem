@@ -1,0 +1,45 @@
+---
+// How-to step. Numbered marker + title, body from MDX slot.
+export interface Props {
+  number: number;
+  title: string;
+}
+const { number, title } = Astro.props;
+---
+
+<div class="hs-step">
+  <div class="hs-step__num" aria-hidden="true">{number}</div>
+  <div class="hs-step__body">
+    <h2 class="hs-step__title">{title}</h2>
+    <div class="hs-step__content"><slot /></div>
+  </div>
+</div>
+
+<style>
+  .hs-step {
+    display: flex;
+    gap: var(--space-4);
+    margin-block: var(--space-6);
+  }
+  .hs-step__num {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-h4);
+  }
+  .hs-step__title {
+    margin: var(--space-1) 0 var(--space-2);
+    font-size: var(--font-size-h3);
+  }
+  .hs-step__content {
+    color: var(--color-text-secondary);
+  }
+</style>

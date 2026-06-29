@@ -1,0 +1,53 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  width: number;
+  height: number;
+}
+const { src, alt, caption, width, height } = Astro.props;
+
+// Derive a WebP counterpart by swapping the extension.
+// The browser falls back to the original if the .webp file doesn't exist.
+const webpSrc = src.replace(/\.(jpe?g|png)$/i, ".webp");
+const hasWebp = webpSrc !== src;
+---
+
+<figure class="hs-imgcap">
+  <picture>
+    {hasWebp && <source srcset={webpSrc} type="image/webp" />}
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      loading="lazy"
+      decoding="async"
+      class="hs-imgcap__img"
+    />
+  </picture>
+  {caption && <figcaption class="hs-imgcap__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .hs-imgcap {
+    margin: var(--space-6) 0;
+  }
+
+  .hs-imgcap__img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    display: block;
+  }
+
+  .hs-imgcap__caption {
+    margin-top: var(--space-2);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-caption);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-snug);
+    text-align: center;
+  }
+</style>

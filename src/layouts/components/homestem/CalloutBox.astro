@@ -1,0 +1,19 @@
+---
+// Used as an MDX shortcode. Variant drives the left border + tint.
+export interface Props {
+  variant?: "tip" | "warning" | "note" | "danger";
+  title?: string;
+}
+const { variant = "note", title } = Astro.props;
+const icon = { tip: "💡", warning: "⚠️", note: "ℹ️", danger: "⛔" }[variant];
+---
+
+<div class={`hs-callout hs-callout--${variant}`}>
+  <div class="hs-callout__header">
+    <span class="hs-callout__icon" aria-hidden="true">{icon}</span>
+    {title && <strong class="hs-callout__title">{title}</strong>}
+  </div>
+  <div class="hs-callout__body">
+    <slot />
+  </div>
+</div>

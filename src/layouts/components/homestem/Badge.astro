@@ -1,0 +1,17 @@
+---
+export interface Props {
+  label: string;
+  variant?: "default" | "accent";
+  class?: string;
+}
+const { label, variant = "default", class: className } = Astro.props;
+const classes = [
+  "hs-badge",
+  variant === "accent" ? "hs-badge--accent" : "",
+  className ?? "",
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<span class={classes}>{label}</span>

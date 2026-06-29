@@ -1,0 +1,40 @@
+---
+// Star rating, 1–5 with half-star support. Accent-colored per design spec.
+export interface Props {
+  rating: number;
+  reviewCount?: number;
+  class?: string;
+}
+const { rating, reviewCount, class: className } = Astro.props;
+const clamped = Math.max(0, Math.min(5, rating));
+const full = Math.floor(clamped);
+const hasHalf = clamped - full >= 0.25 && clamped - full < 0.75;
+const roundedFull = clamped - full >= 0.75 ? full + 1 : full;
+---
+
+<span
+  class={`hs-stars${className ? ` ${className}` : ""}`}
+  role="img"
+  aria-label={`Rated ${clamped} out of 5`}
+>
+  {
+    Array.from({ length: 5 }).map((_, i) => {
+      if (i < roundedFull) return <span aria-hidden="true">★</span>;
+      if (i === full && hasHalf)
+        return (
+          <span aria-hidden="true" style="position:relative;display:inline-block">
+            <span style="color:var(--color-border-strong)">★</span>
+            <span style="position:absolute;left:0;top:0;width:50%;overflow:hidden">
+              ★
+            </span>
+          </span>
+        );
+      return (
+        <span aria-hidden="true" style="color:var(--color-border-strong)">
+          ★
+        </span>
+      );
+    })
+  }
+  {reviewCount != null && <span class="hs-stars__count">({reviewCount})</span>}
+</span>

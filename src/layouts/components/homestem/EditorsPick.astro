@@ -1,0 +1,72 @@
+---
+import AffiliateLink from "@/components/homestem/AffiliateLink.astro";
+
+export interface Props {
+  name: string;
+  image: string;
+  imageAlt: string;
+  affiliateUrl: string;
+  price: string;
+}
+const { name, image, imageAlt, affiliateUrl, price } = Astro.props;
+---
+
+<div class="hs-pick">
+  <span class="hs-pick__label">Editor's Pick</span>
+  <div class="hs-pick__row">
+    <img src={image} alt={imageAlt} width="80" height="80" loading="lazy" />
+    <div>
+      <div class="hs-pick__name">{name}</div>
+      <div class="hs-pick__price">{price}</div>
+    </div>
+  </div>
+  <AffiliateLink
+    href={affiliateUrl}
+    product={name}
+    class="hs-btn hs-btn--primary hs-btn--block"
+  >
+    Check price →
+  </AffiliateLink>
+</div>
+
+<style>
+  .hs-pick {
+    background-color: var(--color-primary-bg);
+    border-left: 3px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .hs-pick__label {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-micro);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+  }
+  .hs-pick__row {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+  }
+  .hs-pick__row img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+  .hs-pick__name {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-label);
+    color: var(--color-text-primary);
+  }
+  .hs-pick__price {
+    font-size: var(--font-size-caption);
+    color: var(--color-text-secondary);
+  }
+</style>

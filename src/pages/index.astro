@@ -1,22 +1,364 @@
 ---
-import Posts from "@/components/Posts.astro";
-import config from "@/config/config.json";
+import { Image } from "astro:assets";
 import Base from "@/layouts/Base.astro";
-import Pagination from "@/layouts/components/Pagination.astro";
-import { getSinglePage } from "@/lib/contentParser.astro";
-import { sortByDate } from "@/lib/utils/sortFunctions";
+import ArticleGrid from "@/components/homestem/ArticleGrid.astro";
+import Badge from "@/components/homestem/Badge.astro";
+import Tag from "@/components/homestem/Tag.astro";
+import { sortByPubDate } from "@/lib/articleCard";
+import { categories, categoryLabel } from "@/lib/categories";
+import { getCollection } from "astro:content";
 
-const posts = await getSinglePage("posts");
-const sortedPosts = sortByDate(posts);
-const totalPages = Math.ceil(posts.length / config.settings.pagination);
-const currentPosts = sortedPosts.slice(0, config.settings.pagination);
+const all = sortByPubDate(
+  await getCollection("articles", ({ data }) => import.meta.env.DEV || !data.draft),
+);
+
+const [featured, ...rest] = all;
+const latest = rest.slice(0, 6);
+
+const typeLabels: Record<string, string> = {
+  listicle: "Listicle",
+  "buying-guide": "Buying Guide",
+  comparison: "Comparison",
+  "how-to": "How-To",
+};
+
+const categoryEmoji: Record<string, string> = {
+  "indoor-plants": "🪴",
+  "small-space-org": "📦",
+  "lawn-outdoor": "🌳",
+  "balcony-garden": "🌿",
+  "home-decor": "🛋",
+};
+
+const sections = categories
+  .map((c) => ({
+    category: c,
+    articles: all.filter((a) => a.data.category === c.slug).slice(0, 3),
+  }))
+  .filter((s) => s.articles.length > 0);
 ---
 
 <Base>
-  <section class="section">
-    <div class="container">
-      <Posts posts={currentPosts} className="mb-16" />
-      <Pagination currentPage={1} totalPages={totalPages} />
+  {/* ── HERO (featured article) ──────────────────────────────────── */}
+  {
+    featured && (
+      <section class="hs-home-hero" aria-label="Featured guide">
+        <Image
+          src={featured.data.heroImage}
+          alt={featured.data.heroImageAlt}
+          widths={[800, 1100, 1440]}
+          sizes="100vw"
+          loading="eager"
+          class="hs-home-hero__img"
+        />
+        <div class="hs-home-hero__scrim" aria-hidden="true" />
+        <div class="hs-home-hero__content">
+          <div class="hs-home-hero__eyebrow">
+            <Tag
+              label={categoryLabel(featured.data.category)}
+              href={`/category/${featured.data.category}`}
+            />
+            <Badge label={typeLabels[featured.data.type] ?? ""} variant="accent" />
+          </div>
+          <h1 class="hs-home-hero__title">{featured.data.title}</h1>
+          {featured.data.description && (
+            <p class="hs-home-hero__desc">{featured.data.description}</p>
+          )}
+          <a href={`/${featured.id}`} class="hs-btn hs-btn--inverted">
+            Read the guide →
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  {/* ── BROWSE BY CATEGORY ───────────────────────────────────────── */}
+  <nav class="hs-home-browse" aria-label="Browse by category">
+    <div class="hs-home-browse__inner">
+      <h2 class="hs-home-browse__heading">Browse by category</h2>
+      <div class="hs-home-browse__chips">
+        {
+          categories.map((c) => (
+            <a href={`/category/${c.slug}`} class="hs-home-browse__chip">
+              <span aria-hidden="true">{categoryEmoji[c.slug]}</span>
+              {c.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </nav>
+
+  {/* ── LATEST GUIDES (tinted band) ──────────────────────────────── */}
+  {
+    latest.length > 0 && (
+      <section class="hs-home-section hs-home-section--tint">
+        <div class="hs-home-section__inner">
+          <h2 class="hs-home-section__heading">Latest guides</h2>
+          <ArticleGrid articles={latest} />
+        </div>
+      </section>
+    )
+  }
+
+  {/* ── CATEGORY SECTIONS (alternating tint) ─────────────────────── */}
+  {
+    sections.map((s, i) => (
+      <section class={`hs-home-section${i % 2 === 1 ? " hs-home-section--tint" : ""}`}>
+        <div class="hs-home-section__inner">
+          <div class="hs-home-section__head">
+            <h2 class="hs-home-section__heading">{s.category.label}</h2>
+            <a href={`/category/${s.category.slug}`} class="hs-textlink">
+              View all →
+            </a>
+          </div>
+          <ArticleGrid articles={s.articles} />
+        </div>
+      </section>
+    ))
+  }
+
+  {/* ── PINTEREST CTA ────────────────────────────────────────────── */}
+  <section class="hs-home-pinterest" aria-label="Follow us on Pinterest">
+    <div class="hs-home-pinterest__inner">
+      <div class="hs-home-pinterest__text">
+        <p class="hs-home-pinterest__eyebrow">Pinterest</p>
+        <h2 class="hs-home-pinterest__heading">Save your favorites for later</h2>
+        <p class="hs-home-pinterest__sub">
+          Follow HomeStem on Pinterest for daily garden ideas, plant care tips, and
+          home organization inspiration.
+        </p>
+      </div>
+      <a
+        href="https://www.pinterest.com/homeandstem/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hs-btn hs-btn--inverted"
+      >
+        Follow HomeStem on Pinterest
+      </a>
     </div>
   </section>
 </Base>
+
+<style>
+  /* ── Hero ──────────────────────────────────────────────────────── */
+  .hs-home-hero {
+    position: relative;
+    height: 540px;
+    overflow: hidden;
+  }
+
+  .hs-home-hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hs-home-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(27, 67, 50, 0.05) 0%,
+      rgba(27, 67, 50, 0.55) 50%,
+      rgba(27, 67, 50, 0.95) 100%
+    );
+  }
+
+  .hs-home-hero__content {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: var(--page-width);
+    padding: var(--space-7) var(--page-padding);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .hs-home-hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .hs-home-hero__title {
+    color: var(--color-white);
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: var(--line-height-heading);
+    margin: 0;
+    max-width: 620px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .hs-home-hero__desc {
+    color: rgba(255, 255, 255, 0.88);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-label-lg);
+    line-height: var(--line-height-snug);
+    margin: 0;
+    max-width: 560px;
+  }
+
+  /* ── Browse chips ──────────────────────────────────────────────── */
+  .hs-home-browse {
+    background-color: var(--color-bg-page);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .hs-home-browse__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: var(--space-6) var(--page-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .hs-home-browse__heading {
+    font-size: clamp(20px, 3vw, 26px);
+    margin: 0;
+  }
+
+  .hs-home-browse__chips {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .hs-home-browse__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    white-space: nowrap;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg-subtle);
+    color: var(--color-text-secondary);
+    font-family: var(--font-heading);
+    font: var(--type-label);
+    text-decoration: none;
+  }
+
+  .hs-home-browse__chip:hover {
+    background-color: var(--color-primary-bg);
+    color: var(--color-primary);
+  }
+
+  /* ── Content sections ──────────────────────────────────────────── */
+  .hs-home-section {
+    width: 100%;
+  }
+
+  .hs-home-section--tint {
+    background-color: var(--color-bg-tint);
+  }
+
+  .hs-home-section__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: var(--space-7) var(--page-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .hs-home-section__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .hs-home-section__heading {
+    font-size: clamp(22px, 3vw, 28px);
+    margin: 0;
+  }
+
+  /* ── Pinterest CTA ─────────────────────────────────────────────── */
+  .hs-home-pinterest {
+    background-color: var(--color-primary);
+    width: 100%;
+  }
+
+  .hs-home-pinterest__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: var(--space-8) var(--page-padding);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-4);
+  }
+
+  .hs-home-pinterest__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .hs-home-pinterest .hs-btn {
+    flex-shrink: 0;
+  }
+
+  /* Desktop: text left, button right, matching the Figma layout */
+  @media (min-width: 1024px) {
+    .hs-home-pinterest__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      gap: var(--space-6);
+    }
+  }
+
+  .hs-home-pinterest__eyebrow {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-label-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    color: var(--color-primary-light);
+    margin: 0;
+  }
+
+  .hs-home-pinterest__heading {
+    font-size: clamp(24px, 4vw, 36px);
+    color: var(--color-white);
+    margin: 0;
+    line-height: var(--line-height-heading);
+  }
+
+  .hs-home-pinterest__sub {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-label-lg);
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 520px;
+    line-height: var(--line-height-snug);
+    margin: 0;
+  }
+
+  /* ── Mobile ────────────────────────────────────────────────────── */
+  @media (max-width: 1023px) {
+    .hs-home-hero {
+      height: 420px;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .hs-home-hero {
+      height: 380px;
+    }
+
+    .hs-home-hero__content {
+      max-width: 100%;
+    }
+  }
+</style>

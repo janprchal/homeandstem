@@ -1,0 +1,97 @@
+---
+import ArticleBase from "@/layouts/ArticleBase.astro";
+import AffiliateDisclaimer from "@/components/homestem/AffiliateDisclaimer.astro";
+import ArticleHero from "@/components/homestem/ArticleHero.astro";
+import ArticleSidebar from "@/components/homestem/ArticleSidebar.astro";
+import AuthorBox from "@/components/homestem/AuthorBox.astro";
+import RelatedArticles from "@/components/homestem/RelatedArticles.astro";
+import config from "@/config/config.json";
+import readingTime from "@/lib/utils/readingTime";
+
+// Composed article page. The body composition (which product/article components
+// appear, in what order) is authored per type in the MDX itself, following the
+// fixed templates in homestem-code-spec.md §4. This layout owns the shell:
+// hero, sidebar widget set (per type), author E-E-A-T box, disclaimer, and SEO
+// JSON-LD.
+export interface Props {
+  article: any;
+  headings: Array<{ depth: number; text: string; slug: string }>;
+  related: Array<{
+    title: string;
+    slug: string;
+    image: string;
+    imageAlt: string;
+    category: string;
+  }>;
+  heroSrc: string;
+}
+const { article, headings, related, heroSrc } = Astro.props;
+const data = article.data;
+const author = data.authors?.[0];
+const readTime = article.body ? readingTime(article.body) : undefined;
+const canonical = `${config.site.base_url}/${article.id}`;
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: data.title,
+  description: data.description,
+  image: heroSrc.startsWith("http")
+    ? heroSrc
+    : `${config.site.base_url}${heroSrc}`,
+  datePublished: data.pubDate.toISOString(),
+  author: { "@type": "Person", name: author ?? config.metadata.meta_author },
+  publisher: {
+    "@type": "Organization",
+    name: config.site.title,
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+};
+---
+
+<ArticleBase
+  title={data.title}
+  meta_title={data.meta_title}
+  description={data.description}
+  image={heroSrc}
+  canonical={canonical}
+  noindex={data.draft}
+  jsonLd={[articleSchema]}
+>
+  <Fragment slot="hero">
+    <ArticleHero
+      title={data.title}
+      heroImage={data.heroImage}
+      heroImageAlt={data.heroImageAlt}
+      category={data.category}
+      type={data.type}
+      pubDate={data.pubDate}
+      readTime={readTime}
+      author={author}
+    />
+  </Fragment>
+
+  <slot />
+
+  <RelatedArticles articles={related} />
+
+  {data.affiliate && <AffiliateDisclaimer />}
+  {
+    author && (
+      <AuthorBox
+        name={author}
+        bio="HomeStem's editorial team tests home & garden gear so you can buy with confidence."
+      />
+    )
+  }
+
+  <Fragment slot="sidebar">
+    <ArticleSidebar
+      type={data.type}
+      headings={headings}
+      editorsPick={data.editorsPick}
+      compareProducts={data.compareProducts}
+      essentials={data.essentials}
+    />
+  </Fragment>
+</ArticleBase>

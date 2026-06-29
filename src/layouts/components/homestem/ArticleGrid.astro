@@ -1,0 +1,23 @@
+---
+import ArticleCard from "@/components/homestem/ArticleCard.astro";
+import { toCardProps } from "@/lib/articleCard";
+
+// Responsive grid of ArticleCards from `articles` collection entries.
+export interface Props {
+  articles: any[];
+  class?: string;
+}
+const { articles, class: className } = Astro.props;
+---
+
+<div class={`hs-grid${className ? ` ${className}` : ""}`}>
+  {articles.map((a) => <ArticleCard {...toCardProps(a)} />)}
+</div>
+
+<style>
+  .hs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-5);
+  }
+</style>

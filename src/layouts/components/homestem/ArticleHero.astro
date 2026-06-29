@@ -1,0 +1,140 @@
+---
+import { Image } from "astro:assets";
+import Badge from "@/components/homestem/Badge.astro";
+import Tag from "@/components/homestem/Tag.astro";
+import dateFormat from "@/lib/utils/dateFormat";
+
+// Full-bleed landscape overlay banner. H1 lives INSIDE the hero only — never
+// repeated in the body below. Eyebrow = category Tag (neutral pill) + article-type
+// Badge (accent pill). Scrim is deep-green #1B4332, not black.
+export interface Props {
+  title: string;
+  heroImage: ImageMetadata;
+  heroImageAlt: string;
+  category: string;
+  type: "listicle" | "buying-guide" | "comparison" | "how-to";
+  pubDate: Date;
+  readTime?: string;
+  author?: string;
+}
+
+const { title, heroImage, heroImageAlt, category, type, pubDate, readTime, author } =
+  Astro.props;
+
+const categoryLabel = category.replace(/-/g, " ");
+
+const typeLabels: Record<string, string> = {
+  listicle: "Listicle",
+  "buying-guide": "Buying Guide",
+  comparison: "Comparison",
+  "how-to": "How-To",
+};
+
+const authorLabel = author ?? "the HomeStem Team";
+---
+
+<header class="hs-hero">
+  <div class="hs-hero__banner">
+    <Image
+      src={heroImage}
+      alt={heroImageAlt}
+      widths={[800, 1100, 1440]}
+      sizes="(max-width: 1100px) 100vw, 1100px"
+      loading="eager"
+      class="hs-hero__img"
+    />
+    <div class="hs-hero__scrim" aria-hidden="true"></div>
+    <div class="hs-hero__content">
+      <div class="hs-hero__eyebrow">
+        <Tag label={categoryLabel} />
+        <Badge label={typeLabels[type]} variant="accent" />
+      </div>
+      <h1 class="hs-hero__title">{title}</h1>
+      <p class="hs-hero__meta">
+        By {authorLabel}{readTime && <> · {readTime}</>} · Updated {
+          dateFormat(pubDate)
+        }
+      </p>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hs-hero__banner {
+    position: relative;
+    height: 440px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .hs-hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Deep-green scrim: alpha ramp 0 → 0.55 → 0.95 toward bottom */
+  .hs-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(27, 67, 50, 0.05) 0%,
+      rgba(27, 67, 50, 0.55) 50%,
+      rgba(27, 67, 50, 0.95) 100%
+    );
+  }
+
+  /* hero-content anchored bottom-left, max 760px wide on desktop */
+  .hs-hero__content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 760px;
+    max-width: 100%;
+    padding: var(--space-7) var(--space-7) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .hs-hero__eyebrow {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .hs-hero__title {
+    color: var(--color-white);
+    font-size: clamp(26px, 3.2vw, 38px);
+    line-height: 1.15;
+    margin: 0;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .hs-hero__meta {
+    color: rgba(255, 255, 255, 0.88);
+    font: var(--type-label);
+    margin: 0;
+    text-transform: capitalize;
+  }
+
+  /* Mobile: 375×400, no border-radius (goes edge to edge), smaller title */
+  @media (max-width: 1023px) {
+    .hs-hero__banner {
+      height: 400px;
+      border-radius: 0;
+    }
+
+    .hs-hero__content {
+      padding: var(--space-5) var(--page-padding) var(--space-5);
+      width: 335px;
+      max-width: 100%;
+    }
+
+    .hs-hero__title {
+      font-size: clamp(22px, 6vw, 28px);
+    }
+  }
+</style>

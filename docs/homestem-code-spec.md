@@ -1,5 +1,5 @@
 # HomeStem — Code Specification
-*Version 1.0 | June 2026*
+*Version 1.1 | June 2026 (React islands; overlay hero + Tag/Badge eyebrow; flat cards; RelatedArticles end-of-body; responsive Layout variants)*
 *Brief for Claude Code. For visual design, colors, and layout, see `homestem-design-spec.md`.*
 
 ---
@@ -8,7 +8,8 @@
 
 **HomeStem** (homeandstem.com) is an English-language affiliate blog in the Home & Garden niche, monetized via Amazon Associates (tracking ID: `homeandstem-20`). Traffic source: Pinterest → Blog → Amazon.
 
-**Tech stack:** Astro (static site generator) + Vue 3 components + Markdown content files + Netlify hosting.
+**Tech stack:** Astro (static site generator) + **React islands** + Tailwind CSS v4 + Markdown/MDX content files + Netlify hosting.
+> **Note (2026-06-15):** this spec originally said Vue 3, but the chosen theme (bookworm-light-astro) uses **React** — React is the convention going forward. Treat any "Vue" reference in older docs as React.
 
 **Core conversion goal:** Get the user to click an Amazon affiliate link. Every component must serve this goal.
 
@@ -18,8 +19,8 @@
 
 | Layer | Choice |
 |-------|--------|
-| Framework | Astro v6 |
-| Components | Vue 3 |
+| Framework | Astro v6 (SSG) |
+| Interactive components | React islands (theme convention; not Vue) |
 | Styling | Tailwind CSS v4 |
 | Content | Markdown files in repo (Astro Content Collections) |
 | Version control | GitHub |
@@ -30,37 +31,65 @@
 
 ## 3. Content Collections Schema
 
-Define in `src/content/config.ts`. All fields below are required unless marked optional.
+Defined in `src/content.config.ts` (root of the repo, not inside `src/content/`). Uses Astro's glob loader pattern. All fields are required unless marked optional.
 
 ```typescript
-import { defineCollection, z } from 'astro:content';
+import { glob } from "astro/loaders";
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
 
-const articles = defineCollection({
-  type: 'content',
+// Articles collection
+const articlesCollection = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "src/content/articles" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      meta_title: z.string().optional(),      // overrides <title> tag if set
+      description: z.string(),
+      pubDate: z.coerce.date(),
+      type: z.enum(["listicle", "buying-guide", "comparison", "how-to"]),
+      category: z.enum([
+        "indoor-plants",
+        "small-space-org",
+        "lawn-outdoor",
+        "balcony-garden",
+        "home-decor",
+      ]),
+      tags: z.array(z.string()).default(() => []),
+      authors: z.array(z.string()).default(() => ["Admin"]),
+      heroImage: image(),                     // co-located file, Astro image()-optimised
+      heroImageAlt: z.string(),
+      editorsPick: z.string().optional(),     // product slug → EditorsPick sidebar
+      compareProducts: z.array(z.string()).optional(), // product slugs for comparison type
+      // how-to only: tools/materials checklist. Feeds WhatYouNeedList (body) and
+      // WhatYouNeedMini (sidebar) — both read from the same frontmatter array.
+      essentials: z.array(z.object({
+        name: z.string(),
+        estimatedCost: z.string().optional(),
+        affiliateUrl: z.url().optional(),
+        category: z.enum(["tool", "material"]).optional(),
+      })).optional(),
+      seasonal: z.boolean().default(false),
+      affiliate: z.boolean().default(true),
+      draft: z.boolean().default(false),
+    }),
+});
+
+// Products data collection — one YAML per product, slug = filename.
+// Referenced by editorsPick / compareProducts frontmatter fields.
+// Resolved at runtime via src/lib/products.ts → getProduct(slug).
+const productsCollection = defineCollection({
+  loader: glob({ pattern: "**/*.{yaml,yml}", base: "src/content/products" }),
   schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    pubDate: z.date(),
-    type: z.enum(['listicle', 'buying-guide', 'comparison', 'how-to']),
-    category: z.enum([
-      'indoor-plants',
-      'small-space-org',
-      'lawn-outdoor',
-      'balcony-garden',
-      'home-decor'
-    ]),
-    tags: z.array(z.string()),
-    heroImage: z.string(),
-    heroImageAlt: z.string(),
-    editorsPick: z.string().optional(),       // product slug for EditorsPick sidebar
-    compareProducts: z.array(z.string()).optional(), // comparison articles only
-    seasonal: z.boolean().default(false),
-    affiliate: z.boolean().default(true),
-    draft: z.boolean().default(false),
+    name: z.string(),
+    image: z.string(),      // plain /public path (not image()-optimised yet)
+    imageAlt: z.string(),
+    affiliateUrl: z.url(), // full Amazon URL; AffiliateLink appends the tracking tag
+    price: z.string(),
   }),
 });
 
-export const collections = { articles };
+export const collections = { articles: articlesCollection, products: productsCollection };
 ```
 
 **Example frontmatter:**
@@ -87,81 +116,84 @@ draft: false
 
 Each article type maps to a layout file and a set of components. Content is written in Markdown/MDX; Astro renders it using the matching layout.
 
+**Shared across all types (added 2026-06-15):**
+- **Hero `[1]`** is a full-bleed **overlay banner** (background photo + dark-green scrim + bottom-left content): an **eyebrow row** (category Tag + article-type Badge) + the **H1** (white) + a **meta line** (`By the HomeStem Team · X min read · Updated <Month Year>`). The H1 lives in the hero; the body starts with the intro. `heroImage` is the 2:3 ≥1000px og:image/Pinterest source, cropped to landscape for the banner.
+- **RelatedArticles** sits at the **end of the body** (after FAQ, before AffiliateDisclaimer) — **not** in the sidebar. Sidebar = TableOfContents + one type-specific widget only.
+- **Responsive:** desktop = 720px content + 280px sticky sidebar; mobile (<1024px) = single column, sidebar widgets reflow below the intro. ProductHeroCard, VerdictCards, VerdictBlock, RelatedArticles each render image-left/row on desktop and stacked on mobile (in Figma these are `Layout` component variants; in code, one component with a CSS breakpoint). ComparisonTable & HeadToHeadTable become horizontal-scroll on mobile.
+- **Flat cards:** all cards/tables use a `1px` border + radius, **no drop shadow**.
+
 ### 4.1 Listicle — `type: listicle`
 
 ```
-[1] Hero image (2:3, min 1000px, with text overlay)
-[2] H1 — article title
-[3] Intro paragraph (2–4 sentences)
-[4] ComparisonTable — all products at a glance
-[5] Product blocks (5–8 total), each containing:
-    [5a] H2: "#N Best [adjective]: [Product Name]"
-    [5b] ProductHeroCard
-    [5c] Body text (2–4 paragraphs, second person)
-    [5d] ProsConsList
-[6] H2: "What to Look for in [Category]" — 3–5 H3 subsections (no product mentions)
-[7] FAQ
+[1] Hero — overlay banner: eyebrow (Tag + Badge) + H1 + meta line
+[2] Intro paragraph (2–4 sentences)
+[3] ComparisonTable — all products at a glance
+[4] Product blocks (5–8 total), each containing:
+    [4a] H2: "#N Best [adjective]: [Product Name]"
+    [4b] ProductHeroCard
+    [4c] Body text (2–4 paragraphs, second person)
+    [4d] ProsConsList
+[5] H2: "What to Look for in [Category]" — 3–5 H3 subsections (no product mentions)
+[6] FAQ
+[7] RelatedArticles — end of body, after FAQ
 [8] AffiliateDisclaimer
 
-SIDEBAR (sticky, desktop):
+SIDEBAR (sticky, desktop) — 2 widgets:
     [S1] TableOfContents
     [S2] EditorsPick
-    [S3] RelatedArticles
 ```
 
 ### 4.2 Buying Guide — `type: buying-guide`
 
 ```
-[1] Hero image
-[2] H1 — "Best [Product] for [Use Case] ([Year])"
-[3] Intro paragraph (2–4 sentences)
-[4] H2: "What to Look for" — 3–5 H3 criteria (no product mentions, longer than Listicle)
-[5] H2: "[Product] Types: Which Is Right for You?" (optional)
-[6] Our picks (3–5 products), each H2 labeled:
+[1] Hero — overlay banner: eyebrow (Tag + Badge "Buying Guide") + H1 "Best [Product] for [Use Case] ([Year])" + meta
+[2] Intro paragraph (2–4 sentences)
+[3] H2: "What to Look for" — 3–5 H3 criteria (no product mentions, longer than Listicle)
+[4] H2: "[Product] Types: Which Is Right for You?" (optional)
+[5] Our picks (3–5 products), each H2 labeled:
     "Best Overall: [Product]" / "Best Budget Pick: [Product]" / "Best Premium Pick: [Product]"
     Each containing: ProductHeroCard + body text + ProsConsList
-[7] FAQ
+[6] FAQ
+[7] RelatedArticles — end of body, after FAQ
 [8] AffiliateDisclaimer
 
-SIDEBAR: same as Listicle
+SIDEBAR (2 widgets): TableOfContents + EditorsPick (same as Listicle)
 ```
 
 ### 4.3 Comparison — `type: comparison`
 
 ```
-[1] Hero image (ideally side-by-side of both products)
-[2] H1 — must contain exact "[Product A] vs [Product B]" phrase
-[3] Intro paragraph (2–4 sentences)
-[4] VerdictCards — quick verdict, both products
-[5] HeadToHeadTable — criteria rows, winner highlighted
-[6] Detailed criterion sections — one H2 per criterion, mini-verdict at end
-[7] VerdictBlock — "Buy [A] if..." / "Buy [B] if..."
-[8] FAQ
+[1] Hero — overlay banner: eyebrow (Tag + Badge "Comparison") + H1 (must contain exact "[Product A] vs [Product B]") + meta
+[2] Intro paragraph (2–4 sentences)
+[3] VerdictCards — quick verdict, both products
+[4] HeadToHeadTable — criteria rows, winner highlighted
+[5] Detailed criterion sections — one H2 per criterion, mini-verdict at end
+[6] VerdictBlock — "Buy [A] if..." / "Buy [B] if..."
+[7] FAQ
+[8] RelatedArticles — end of body, after FAQ
 [9] AffiliateDisclaimer
 
-SIDEBAR:
+SIDEBAR (2 widgets):
     [S1] TableOfContents
     [S2] VerdictMini (replaces EditorsPick)
-    [S3] RelatedArticles
 ```
 
 ### 4.4 How-to — `type: how-to`
 
 ```
-[1] Hero image (shows the RESULT, not the process)
-[2] H1 — must start with "How to"
-[3] Intro paragraph (2–4 sentences, include difficulty + time + budget estimate)
-[4] WhatYouNeedList (full variant)
-[5] StepBlock × 4–7 steps
-[6] H2: "Tips and Common Mistakes to Avoid" — 4–6 tips
-[7] H2: "Take It Further: Recommended Products" — 2–3 ProductInlineCard
-[8] FAQ
+[1] Hero — overlay banner (shows the RESULT): eyebrow (Tag + Badge "How-To") + H1 (must start with "How to") + meta
+[2] Intro paragraph (2–4 sentences, include difficulty + time + budget estimate)
+[3] WhatYouNeedList (full variant)
+[4] StepBlock × 4–7 steps
+[5] H2: "Tips and Common Mistakes to Avoid" — 4–6 tips
+[6] H2: "Take It Further: Recommended Products" — 2–3 ProductInlineCard
+[7] FAQ
+[8] RelatedArticles — end of body, after FAQ
 [9] AffiliateDisclaimer
 
-SIDEBAR:
+SIDEBAR (2 widgets):
     [S1] TableOfContents
     [S2] WhatYouNeedMini
-    [S3] RelatedArticles
 ```
 
 ---
@@ -182,10 +214,14 @@ interface ProductHeroCardProps {
 }
 ```
 **Behavior:** All clicks push to dataLayer: `{ event: 'affiliate_click', product: name, url: affiliateUrl }`. Images: lazy loading, WebP with JPEG fallback.
+**Layout/visual:** Flat card — `1px` border + radius, no shadow. Responsive: image-left on desktop, stacked (image-top, full-width CTA) below 1024px. (Figma documents this as a `Layout` variant: Horizontal/Stacked.)
+**Badge position:** The optional badge renders *above* the image (flex-column, `gap: 8px`), not overlaid on it. The left column is a flex-column: `[badge?] → [image]`.
+**Body column:** stretches to the full card height; CTA button is pinned to the bottom via `margin-top: auto`. Row order: `[name H3] → [stars + price row] → [price disclaimer] → [CTA button]`.
 
 ---
 
 ### ComparisonTable
+**Flat** (border, no shadow). **Mobile:** horizontal swipe — fixed-width table inside a clipped, scrollable wrapper with a "→ swipe" hint (no column compression).
 ```typescript
 interface ComparisonTableProps {
   products: Array<{
@@ -257,6 +293,7 @@ No props — static component. Must appear on every page containing affiliate li
 ---
 
 ### RelatedArticles
+**Placement:** end of article body (after FAQ, before AffiliateDisclaimer) — not in the sidebar. Responsive: full-width 3-card row on desktop, stacked cards on mobile.
 ```typescript
 interface RelatedArticlesProps {
   articles: Array<{
@@ -297,6 +334,7 @@ interface ImageWithCaptionProps {
 ---
 
 ### VerdictCards
+**Responsive:** two cards side-by-side (with "vs") on desktop, stacked on mobile. Winner card has a 2px primary border. (Figma `Layout` variant: Row/Stacked.)
 ```typescript
 interface VerdictCardsProps {
   productA: {
@@ -321,6 +359,7 @@ interface VerdictCardsProps {
 ---
 
 ### HeadToHeadTable
+**Flat** (border, no shadow). **Mobile:** horizontal swipe — same pattern as ComparisonTable.
 ```typescript
 interface HeadToHeadTableProps {
   productA: { name: string; affiliateUrl: string; image: string; };
@@ -338,6 +377,7 @@ interface HeadToHeadTableProps {
 ---
 
 ### VerdictBlock
+**Responsive:** two "Buy X if…" panels side-by-side on desktop, stacked on mobile. (Figma `Layout` variant: Row/Stacked.)
 ```typescript
 interface VerdictBlockProps {
   productA: {

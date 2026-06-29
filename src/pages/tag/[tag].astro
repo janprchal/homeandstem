@@ -1,0 +1,33 @@
+---
+import ListingLayout from "@/layouts/ListingLayout.astro";
+import { sortByPubDate } from "@/lib/articleCard";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const all = await getCollection(
+    "articles",
+    ({ data }) => import.meta.env.DEV || !data.draft,
+  );
+  const tags = [...new Set(all.flatMap((a) => a.data.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      articles: sortByPubDate(all.filter((a) => a.data.tags.includes(tag))),
+    },
+  }));
+}
+
+const { tag, articles } = Astro.props as { tag: string; articles: any[] };
+const label = tag.replace(/-/g, " ");
+---
+
+<ListingLayout
+  heading={`#${label}`}
+  description={`Articles tagged “${label}”.`}
+  crumbLabel={`#${label}`}
+  crumbUrl={`/tag/${tag}`}
+  meta_title={`#${label} — HomeStem`}
+  articles={articles}
+/>

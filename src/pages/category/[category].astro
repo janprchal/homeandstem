@@ -1,0 +1,34 @@
+---
+import ListingLayout from "@/layouts/ListingLayout.astro";
+import { sortByPubDate } from "@/lib/articleCard";
+import { categories, getCategory } from "@/lib/categories";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const all = await getCollection(
+    "articles",
+    ({ data }) => import.meta.env.DEV || !data.draft,
+  );
+  return categories.map((c) => ({
+    params: { category: c.slug },
+    props: {
+      meta: c,
+      articles: sortByPubDate(all.filter((a) => a.data.category === c.slug)),
+    },
+  }));
+}
+
+const { meta, articles } = Astro.props as {
+  meta: ReturnType<typeof getCategory>;
+  articles: any[];
+};
+---
+
+<ListingLayout
+  heading={meta!.label}
+  description={meta!.description}
+  crumbLabel={meta!.label}
+  crumbUrl={`/category/${meta!.slug}`}
+  meta_title={`${meta!.label} — HomeStem`}
+  articles={articles}
+/>

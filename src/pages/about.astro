@@ -1,62 +1,41 @@
 ---
-import Base from "@/layouts/Base.astro";
-import { markdownify } from "@/lib/utils/textConverter";
-import { Image } from "astro:assets";
-import type { CollectionEntry } from "astro:content";
-import { getEntry, render } from "astro:content";
-
-const entry = (await getEntry("about", "-index")) as CollectionEntry<"about">;
-const { Content } = await render(entry);
-const { title, meta_title, image, what_i_do } = entry.data;
+import ProsePage from "@/layouts/ProsePage.astro";
 ---
 
-<Base title={title} meta_title={meta_title} image={image}>
-  <section class="section">
-    <div class="container">
-      <div class="row md:gx-4">
-        <div class="sm:col-5 md:col-4">
-          {
-            image && (
-              <div class="img-cover mb-8">
-                <Image
-                  src={image}
-                  width={295}
-                  height={395}
-                  alt={title}
-                  class="rounded-lg w-full"
-                />
-              </div>
-            )
-          }
-        </div>
-        <div class="sm:col-7 md:col-8">
-          <h1 set:html={markdownify(title)} class="h3 mb-8" />
+<ProsePage
+  title="About HomeStem"
+  description="HomeStem publishes tested, no-nonsense home & garden buying guides and how-tos."
+  path="/about"
+>
+  <p>
+    HomeStem is a home &amp; garden publication for people who'd rather get it
+    right the first time. We test, research, and compare the gear that makes
+    indoor plants, balconies, small spaces, and yards easier to live with — then
+    tell you plainly what's worth buying.
+  </p>
 
-          <div class="content">
-            <Content />
-          </div>
-          <a href="/contact" class="btn btn-primary text-white py-2"
-            >Get In Touch</a
-          >
-        </div>
-      </div>
-    </div>
-  </section>
+  <h2>What we cover</h2>
+  <ul>
+    <li><strong>Indoor Plants</strong> — care, grow lights, and the gear that keeps your plants thriving.</li>
+    <li><strong>Small Space Org</strong> — storage and organization for apartments and compact homes.</li>
+    <li><strong>Lawn &amp; Outdoor</strong> — tools and tips for a healthier yard.</li>
+    <li><strong>Balcony Garden</strong> — planters and low-maintenance ideas for balconies and patios.</li>
+    <li><strong>Home Decor</strong> — finishing touches that make a house feel like home.</li>
+  </ul>
 
-  <section class="section pt-0">
-    <div class="container">
-      <h3 class="page-heading mb-20">{what_i_do.title}</h3>
-      <div class="row justify-center gy-4 text-center">
-        {
-          what_i_do.items.map((item: any) => (
-            <div class="lg:col-4 md:col-6">
-              <i class="{{.icon}} fa-3x text-primary mb-4" />
-              <h4 class="text-dark font-weight-700 mb-3">{item.title}</h4>
-              <p>{item.description}</p>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-</Base>
+  <h2>How we make money</h2>
+  <p>
+    HomeStem is reader-supported. We use affiliate links — primarily through the
+    Amazon Associates program — and may earn a commission when you buy through
+    them, at no extra cost to you. Commissions never influence our
+    recommendations. Read our
+    <a href="/affiliate-disclosure">Affiliate Disclosure</a> for the full story.
+  </p>
+
+  <h2>Our approach</h2>
+  <p>
+    Every recommendation is grounded in hands-on testing and research, written
+    for a US audience, and checked for current relevance and pricing. If
+    something isn't worth your money, we'll say so.
+  </p>
+</ProsePage>

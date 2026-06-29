@@ -1,20 +1,29 @@
 ---
 import SearchBar from "@/helpers/SearchBar";
 import Base from "@/layouts/Base.astro";
-import { getSinglePage } from "@/lib/contentParser.astro";
+import { categoryLabel } from "@/lib/categories";
+import { getCollection } from "astro:content";
 
-// Retrieve all articles
-const posts = await getSinglePage("posts");
+// Search over the HomeStem articles collection.
+const articles = await getCollection(
+  "articles",
+  ({ data }) => import.meta.env.DEV || !data.draft,
+);
 
-// List of items to search in
-const searchList = posts.map((item) => ({
-  slug: `blog/${item.id}`,
-  data: item.data,
-  content: item.body,
+const searchList = articles.map((item) => ({
+  slug: item.id,
+  data: {
+    title: item.data.title,
+    image: item.data.heroImage.src,
+    date: item.data.pubDate,
+    categories: [categoryLabel(item.data.category)],
+    tags: item.data.tags,
+  },
+  content: item.data.description,
 }));
 ---
 
-<Base title={`Search`}>
+<Base title="Search">
   <section class="section">
     <div class="container">
       <SearchBar client:load searchList={searchList} />

@@ -1,100 +1,282 @@
 ---
-import Logo from "@/components/Logo.astro";
 import menu from "@/config/menu.json";
-import { IoSearch } from "react-icons/io5";
+import Logo from "@/components/homestem/Logo.astro";
 
-export interface ChildNavigationLink {
-  name: string;
-  url: string;
-}
-
-export interface NavigationLink {
-  name: string;
-  url: string;
-  hasChildren?: boolean;
-  children?: ChildNavigationLink[];
-}
-
-const { main }: { main: NavigationLink[] } = menu;
+const { main } = menu;
 ---
 
-<header class="header pt-6">
-  <nav class="navbar container">
-    <!-- logo -->
-    <div class="order-0">
+<header class="hs-header">
+  <div class="hs-header__inner">
+    <!-- Logo -->
+    <a href="/" class="hs-header__logo" aria-label="HomeStem home">
       <Logo />
-    </div>
-    <!-- navbar toggler -->
-    <input id="nav-toggle" type="checkbox" class="hidden" />
-    <label
-      id="show-button"
-      for="nav-toggle"
-      class="order-2 flex cursor-pointer items-center text-black md:order-1 md:hidden"
-    >
-      <svg class="h-6 fill-current" viewBox="0 0 20 20">
-        <title>Menu Open</title>
-        <path d="M0 3h20v2H0V3z m0 6h20v2H0V9z m0 6h20v2H0V0z"></path>
-      </svg>
-    </label>
-    <label
-      id="hide-button"
-      for="nav-toggle"
-      class="order-2 hidden cursor-pointer items-center text-black md:order-1"
-    >
-      <svg class="h-6 fill-current" viewBox="0 0 20 20">
-        <title>Menu Close</title>
-        <polygon
-          points="11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2"
-          transform="rotate(45 10 10)"></polygon>
-      </svg>
-    </label>
-    <!-- /navbar toggler -->
+    </a>
 
-    <ul
-      id="nav-menu"
-      class="navbar-nav order-3 hidden w-full md:order-1 md:flex md:w-auto"
-    >
-      {
-        main.map((menu) => (
-          <>
-            {menu.hasChildren ? (
-              <li class="nav-item nav-dropdown group relative cursor-pointer">
-                <span class="nav-link inline-flex items-center">
-                  {menu.name}
-                  <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                  </svg>
-                </span>
-                <ul class="nav-dropdown-list hidden group-hover:block md:invisible md:absolute md:block md:opacity-0 md:group-hover:visible md:group-hover:opacity-100">
-                  {menu.children?.map((child) => (
-                    <li class="nav-dropdown-item">
-                      <a href={child.url} class="nav-dropdown-link">
-                        {child.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ) : (
-              <li class="nav-item">
-                <a href={menu.url} class="nav-link block">
-                  {menu.name}
-                </a>
-              </li>
-            )}
-          </>
-        ))
-      }
-    </ul>
-    <div class="order-1 ml-auto flex md:order-2 md:ml-0">
-      <a
-        class="mr-4 inline-block cursor-pointer p-2 text-xl text-dark transition hover:text-primary md:mr-0"
-        href="/search"
-        title="seach"
-        aria-label="seach"
-      >
-        <IoSearch />
+    <!-- Main nav -->
+    <nav class="hs-header__nav" id="hs-header-nav" aria-label="Main navigation">
+      <ul class="hs-header__links">
+        {
+          main.map((item) => (
+            <li>
+              <a href={item.url} class="hs-header__link">
+                {item.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Right side: search + mobile burger -->
+    <div class="hs-header__end">
+      <a href="/search" class="hs-header__search" aria-label="Search">
+        <!-- Search icon -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
       </a>
+
+      <button
+        class="hs-header__burger"
+        id="hs-burger"
+        aria-expanded="false"
+        aria-controls="hs-header-nav"
+        aria-label="Toggle navigation"
+        type="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+          class="hs-header__burger-icon hs-header__burger-icon--open"
+        >
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+          class="hs-header__burger-icon hs-header__burger-icon--close"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
-  </nav>
+  </div>
 </header>
+
+<script>
+  // View Transitions re-executes module scripts on every navigation.
+  // Guard with a window flag so we only register document listeners once.
+  if (!(window as any).__hsHeader) {
+    (window as any).__hsHeader = true;
+
+    // Reset nav to closed before every page swap so stale open state never carries over.
+    document.addEventListener("astro:before-preparation", () => {
+      document.getElementById("hs-header-nav")?.classList.remove("hs-header__nav--open");
+      document.getElementById("hs-burger")?.setAttribute("aria-expanded", "false");
+    });
+
+    // Re-bind burger after every page swap. cloneNode strips any stale listeners
+    // that accumulated on the element before this guard was in place.
+    document.addEventListener("astro:page-load", () => {
+      const burger = document.getElementById("hs-burger");
+      const nav = document.getElementById("hs-header-nav");
+      if (!burger || !nav) return;
+      const fresh = burger.cloneNode(true) as HTMLButtonElement;
+      burger.replaceWith(fresh);
+      fresh.addEventListener("click", () => {
+        const open = fresh.getAttribute("aria-expanded") === "true";
+        fresh.setAttribute("aria-expanded", String(!open));
+        nav.classList.toggle("hs-header__nav--open");
+      });
+    });
+  }
+</script>
+
+<style>
+  .hs-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--color-bg-card);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .hs-header__inner {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: 0 var(--page-padding);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  /* Logo */
+  .hs-header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  /* Nav */
+  .hs-header__nav {
+    margin-left: auto;
+  }
+
+  .hs-header__links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hs-header__link {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-label);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .hs-header__link:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-bg);
+  }
+
+  /* Right side */
+  .hs-header__end {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  .hs-header__search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-sm);
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .hs-header__search:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-bg);
+  }
+
+  /* Burger button */
+  .hs-header__burger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    padding: 0;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .hs-header__burger:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-bg);
+  }
+
+  /* Show close icon only when menu is open */
+  .hs-header__burger-icon--close {
+    display: none;
+  }
+  .hs-header__burger[aria-expanded="true"] .hs-header__burger-icon--open {
+    display: none;
+  }
+  .hs-header__burger[aria-expanded="true"] .hs-header__burger-icon--close {
+    display: block;
+  }
+
+  /* Mobile */
+  @media (max-width: 1023px) {
+    .hs-header__inner {
+      position: relative;
+    }
+
+    .hs-header__end {
+      margin-left: auto;
+    }
+
+    .hs-header__nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--color-bg-card);
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--space-3) var(--page-padding);
+    }
+
+    .hs-header__nav--open {
+      display: block;
+    }
+
+    .hs-header__links {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .hs-header__link {
+      padding: var(--space-3) var(--space-2);
+      border-radius: 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: var(--font-size-body-sm);
+    }
+    .hs-header__links li:last-child .hs-header__link {
+      border-bottom: none;
+    }
+
+    .hs-header__burger {
+      display: flex;
+    }
+  }
+</style>

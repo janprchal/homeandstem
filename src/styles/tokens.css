@@ -1,0 +1,117 @@
+/*
+ * HomeStem design tokens — source of truth.
+ * Mirrors homestem-design-spec.md §5. Brand colors + fonts are also set in
+ * theme.json so the theme's Tailwind utilities (bg-primary, text-dark, font-primary)
+ * and Google Font loading stay in sync; values here must match those.
+ */
+:root {
+  /* Typography */
+  --font-heading: var(--font-primary, "DM Sans", system-ui, sans-serif);
+  --font-body: var(--font-secondary, "Lora", Georgia, serif);
+
+  /* Font size scale — mirrors Figma text styles exactly */
+  --font-size-base: 17px;        /* body/base */
+  --font-size-body-sm: 15px;     /* body/small  — compact body, callout text */
+  --font-size-caption: 13px;     /* body/caption — muted meta, TOC labels, hints */
+  --font-size-label-lg: 16px;    /* label/large — card titles, FAQ answers */
+  --font-size-label: 14px;       /* label/default — secondary labels, TOC links */
+  --font-size-label-sm: 12px;    /* label/small — badges, read-time chips */
+  --font-size-micro: 11px;       /* not in Figma — all-caps widget labels */
+  --font-size-h4: 18px;          /* heading/h4 */
+  --font-size-h3: 22px;          /* heading/h3 */
+  --font-size-h2: 28px;          /* heading/h2 */
+
+  /* Line heights */
+  --line-height-heading: 1.2;    /* h1/h2/h3 */
+  --line-height-tight: 1.3;      /* h4, label/xs — Figma heading/h4 = 130% */
+  --line-height-label: 1.4;      /* label/default, label/small */
+  --line-height-snug: 1.5;       /* body/caption, disclaimers */
+  --line-height-body: 1.75;      /* body/base, body/small */
+
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Letter spacing */
+  --letter-spacing-badge: 0.02em;  /* badge text */
+  --letter-spacing-label: 0.03em;  /* table headers, section labels */
+  --letter-spacing-caps: 0.04em;   /* all-caps sidebar labels */
+  --letter-spacing-wide: 0.08em;   /* all-caps micro labels (EditorsPick, VerdictMini) */
+
+  /* Text style composites — mirrors the 10 Figma text styles.
+     Usage: font: var(--type-*)
+     letter-spacing is NOT part of the font shorthand; declare it separately when needed.
+     Avoids the --text-* prefix which the Tailwind theme plugin reserves for font-size utilities. */
+  --type-body:     var(--font-weight-regular) var(--font-size-base)/var(--line-height-body)      var(--font-body);
+  --type-body-sm:  var(--font-weight-regular) var(--font-size-body-sm)/var(--line-height-body)   var(--font-body);
+  --type-caption:  var(--font-weight-regular) var(--font-size-caption)/var(--line-height-snug)   var(--font-body);
+  --type-label-lg: var(--font-weight-medium)  var(--font-size-label-lg)/var(--line-height-heading) var(--font-heading);
+  --type-label:    var(--font-weight-medium)  var(--font-size-label)/var(--line-height-label)    var(--font-heading);
+  --type-label-sm: var(--font-weight-medium)  var(--font-size-label-sm)/var(--line-height-label) var(--font-heading);
+  --type-micro:    var(--font-weight-medium)  var(--font-size-micro)/var(--line-height-tight)    var(--font-heading);
+  --type-h4:       var(--font-weight-medium)  var(--font-size-h4)/var(--line-height-tight)       var(--font-heading);
+  --type-h3:       var(--font-weight-medium)  var(--font-size-h3)/var(--line-height-heading)     var(--font-heading);
+  --type-h2:       var(--font-weight-medium)  var(--font-size-h2)/var(--line-height-heading)     var(--font-heading);
+
+  /* Color palette — nature-inspired, trustworthy */
+  --color-primary: #2d6a4f;
+  --color-primary-light: #52b788;
+  --color-primary-dark: #1b4332; /* deep forest — full-bleed anchor sections (hero scrim, CTA) */
+  --color-primary-bg: #d8f3dc;
+  --color-accent: #f4a261;
+  --color-accent-bg: #fff3e0;
+
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #555555;
+  --color-text-muted: #888888;
+
+  --color-bg-page: #fafaf8;
+  --color-bg-card: #ffffff;
+  --color-bg-subtle: #f5f5f0;
+  --color-bg-tint: #e9f4ec; /* light mint — alternating full-bleed section bands */
+
+  --color-border: #e0e0d8;
+  --color-border-strong: #c8c8be;
+
+  --color-white: #ffffff;        /* contrast text on dark backgrounds, button labels */
+
+  --color-success: #2d6a4f;
+  --color-danger: #c0392b;
+  --color-warning: #e67e22;
+  --color-info: #2980b9;
+
+  /* Callout tinted backgrounds */
+  --color-info-bg: #eef5fb;
+  --color-warning-bg: #fdf3e7;
+  --color-danger-bg: #ffeeee;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  /* Layout */
+  --content-width: 720px;
+  --sidebar-width: 280px;
+  --page-width: 1100px;
+  --layout-gap: 40px;
+  --page-padding: 20px;
+}

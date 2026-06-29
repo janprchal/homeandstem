@@ -1,0 +1,172 @@
+/* HomeStem component primitives. Layout-specific styles live in each .astro
+ * component's scoped <style>; shared visual atoms live here. */
+
+/* Button --------------------------------------------------------------- */
+.hs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-body-sm);
+  line-height: var(--line-height-heading);
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.hs-btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+.hs-btn--primary:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-white);
+}
+.hs-btn--outline {
+  background-color: transparent;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.hs-btn--outline:hover {
+  background-color: var(--color-primary-bg);
+}
+.hs-btn--inverted {
+  background-color: var(--color-white);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.hs-btn--inverted:hover {
+  background-color: var(--color-primary-bg);
+}
+.hs-btn--block {
+  width: 100%;
+}
+
+/* Text link ------------------------------------------------------------ */
+.hs-textlink {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+}
+.hs-textlink:hover {
+  text-decoration: underline;
+}
+
+/* Badge ---------------------------------------------------------------- */
+.hs-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary);
+  font: var(--type-label-sm);
+  letter-spacing: var(--letter-spacing-badge);
+}
+.hs-badge--accent {
+  background-color: var(--color-accent-bg);
+  color: var(--color-accent);
+}
+
+/* Tag ------------------------------------------------------------------ */
+.hs-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-caption);
+  text-decoration: none;
+}
+.hs-tag:hover {
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+/* Star rating ---------------------------------------------------------- */
+.hs-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--color-accent);
+  line-height: 1;
+}
+.hs-stars__count {
+  margin-left: var(--space-2);
+  color: var(--color-text-muted);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-caption);
+}
+
+/* Divider -------------------------------------------------------------- */
+.hs-divider {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  margin-block: var(--space-6);
+}
+
+/* Card ----------------------------------------------------------------- */
+.hs-card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* Callout box ---------------------------------------------------------- */
+.hs-callout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-info);
+  background-color: var(--color-info-bg);
+  margin-block: var(--space-5);
+}
+.hs-callout__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.hs-callout__icon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.hs-callout__title {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-label);
+  color: var(--color-text-primary);
+}
+.hs-callout__body {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+.hs-callout--tip {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-bg);
+}
+.hs-callout--warning {
+  border-color: var(--color-warning);
+  background-color: var(--color-warning-bg);
+}
+.hs-callout--danger {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+}
+.hs-callout--note {
+  border-color: var(--color-info);
+  background-color: var(--color-info-bg);
+}

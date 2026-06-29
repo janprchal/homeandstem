@@ -1,0 +1,47 @@
+---
+import { AFFILIATE_REL, withAffiliateTag } from "@/lib/utils/affiliate";
+
+// Canonical affiliate anchor. Applies the tracking tag, the required
+// rel/target, and a data hook the page-level delegated listener uses to push
+// the `affiliate_click` dataLayer event. Never cloak — the real URL is in href.
+export interface Props {
+  href: string;
+  product: string;
+  class?: string;
+  [key: string]: any;
+}
+
+const { href, product, class: className, ...rest } = Astro.props;
+const url = withAffiliateTag(href);
+---
+
+<a
+  href={url}
+  target="_blank"
+  rel={AFFILIATE_REL}
+  data-affiliate
+  data-product={product}
+  class={className}
+  {...rest}
+>
+  <slot />
+</a>
+
+<script>
+  // Delegated once per page (Astro bundles & dedupes this module script).
+  if (!(window as any).__hsAffiliateBound) {
+    (window as any).__hsAffiliateBound = true;
+    document.addEventListener("click", (e) => {
+      const link = (e.target as HTMLElement)?.closest?.(
+        "a[data-affiliate]",
+      ) as HTMLAnchorElement | null;
+      if (!link) return;
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({
+        event: "affiliate_click",
+        product: link.dataset.product,
+        url: link.href,
+      });
+    });
+  }
+</script>

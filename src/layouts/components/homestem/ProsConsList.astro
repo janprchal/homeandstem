@@ -1,0 +1,86 @@
+---
+export interface Props {
+  pros: string[];
+  cons: string[];
+}
+const { pros, cons } = Astro.props;
+---
+
+<div class="hs-proscons">
+  <div class="hs-proscons__col hs-proscons__col--pros">
+    <h4>Pros</h4>
+    <ul>
+      {pros.map((p) => <li>{p}</li>)}
+    </ul>
+  </div>
+  <div class="hs-proscons__col hs-proscons__col--cons">
+    <h4>Cons</h4>
+    <ul>
+      {cons.map((c) => <li>{c}</li>)}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .hs-proscons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin-block: var(--space-5);
+  }
+  .hs-proscons__col {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+  .hs-proscons__col--pros {
+    background-color: var(--color-primary-bg);
+  }
+  .hs-proscons__col--cons {
+    background-color: var(--color-danger-bg);
+  }
+  .hs-proscons h4 {
+    font-size: var(--font-size-label);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-label);
+    margin: 0 0 var(--space-3);
+  }
+  .hs-proscons__col--pros h4 {
+    color: var(--color-success);
+  }
+  .hs-proscons__col--cons h4 {
+    color: var(--color-danger);
+  }
+  .hs-proscons ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .hs-proscons li {
+    position: relative;
+    padding-left: var(--space-5);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--line-height-snug);
+  }
+  .hs-proscons__col--pros li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--color-success);
+    font-weight: var(--font-weight-bold);
+  }
+  .hs-proscons__col--cons li::before {
+    content: "✕";
+    position: absolute;
+    left: 0;
+    color: var(--color-danger);
+    font-weight: var(--font-weight-bold);
+  }
+  @media (max-width: 600px) {
+    .hs-proscons {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

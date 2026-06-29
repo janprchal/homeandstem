@@ -1,0 +1,84 @@
+---
+import Badge from "@/components/homestem/Badge.astro";
+import { categoryLabel } from "@/lib/categories";
+
+// Large featured hero card for the most recent article on the homepage.
+export interface Props {
+  title: string;
+  slug: string;
+  image: string;
+  imageAlt: string;
+  category: string;
+  excerpt?: string;
+  readTime?: string;
+}
+const { title, slug, image, imageAlt, category, excerpt, readTime } =
+  Astro.props;
+---
+
+<a href={`/${slug}`} class="hs-featured hs-card">
+  <div class="hs-featured__media">
+    <img src={image} alt={imageAlt} width="720" height="480" loading="eager" />
+  </div>
+  <div class="hs-featured__body">
+    <Badge label={categoryLabel(category)} />
+    <h2 class="hs-featured__title">{title}</h2>
+    {excerpt && <p class="hs-featured__excerpt">{excerpt}</p>}
+    <span class="hs-featured__cta">
+      Read the guide →{readTime && <span class="hs-featured__meta"> · {readTime}</span>}
+    </span>
+  </div>
+</a>
+
+<style>
+  .hs-featured {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+  .hs-featured:hover {
+    border-color: var(--color-primary-light);
+  }
+  .hs-featured__media {
+    aspect-ratio: 3 / 2;
+  }
+  .hs-featured__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hs-featured__body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    justify-content: center;
+  }
+  .hs-featured__title {
+    font-size: clamp(22px, 3vw, 30px);
+    margin: 0;
+    line-height: var(--line-height-heading);
+  }
+  .hs-featured__excerpt {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-label-lg);
+  }
+  .hs-featured__cta {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+  }
+  .hs-featured__meta {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-regular);
+  }
+  @media (max-width: 768px) {
+    .hs-featured {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -5,39 +5,20 @@
       "url": "/"
     },
     {
-      "name": "About",
-      "url": "/about"
+      "name": "Indoor Plants",
+      "url": "/category/indoor-plants"
     },
     {
-      "name": "Contact",
-      "url": "/contact"
+      "name": "Small Space Org",
+      "url": "/category/small-space-org"
     },
     {
-      "name": "Pages",
-      "url": "",
-      "hasChildren": true,
-      "children": [
-        {
-          "name": "Authors",
-          "url": "/authors"
-        },
-        {
-          "name": "Categories",
-          "url": "/categories"
-        },
-        {
-          "name": "Tags",
-          "url": "/tags"
-        },
-        {
-          "name": "Elements",
-          "url": "/elements"
-        },
-        {
-          "name": "Privacy Policy",
-          "url": "/privacy-policy"
-        }
-      ]
+      "name": "Lawn & Outdoor",
+      "url": "/category/lawn-outdoor"
+    },
+    {
+      "name": "Balcony Garden",
+      "url": "/category/balcony-garden"
     }
   ],
   "footer": [
@@ -46,12 +27,8 @@
       "url": "/about"
     },
     {
-      "name": "Contact",
-      "url": "/contact"
-    },
-    {
-      "name": "Elements",
-      "url": "/elements"
+      "name": "Affiliate Disclosure",
+      "url": "/affiliate-disclosure"
     },
     {
       "name": "Privacy Policy",

@@ -1,0 +1,150 @@
+---
+import AffiliateLink from "@/components/homestem/AffiliateLink.astro";
+
+interface Product {
+  name: string;
+  image: string;
+  imageAlt: string;
+  affiliateUrl: string;
+  bestFor: string;
+  isWinner: boolean;
+}
+export interface Props {
+  productA: Product;
+  productB: Product;
+}
+const { productA, productB } = Astro.props;
+---
+
+<div class="hs-verdictcards" role="group" aria-label="Quick verdict">
+  <!-- Product A -->
+  <div class={`hs-vc hs-card${productA.isWinner ? " hs-vc--winner" : ""}`}>
+    {productA.isWinner && <span class="hs-vc__badge">Our Pick ✓</span>}
+    <img
+      src={productA.image}
+      alt={productA.imageAlt}
+      width="120"
+      height="120"
+      loading="lazy"
+    />
+    <h3 class="hs-vc__name">{productA.name}</h3>
+    <p class="hs-vc__bestfor"><strong>Best for:</strong> {productA.bestFor}</p>
+    <AffiliateLink
+      href={productA.affiliateUrl}
+      product={productA.name}
+      class="hs-btn hs-btn--primary hs-btn--block"
+    >
+      Check price on Amazon →
+    </AffiliateLink>
+  </div>
+
+  <!-- vs badge -->
+  <div class="hs-vc__vs" aria-hidden="true">vs</div>
+
+  <!-- Product B -->
+  <div class={`hs-vc hs-card${productB.isWinner ? " hs-vc--winner" : ""}`}>
+    {productB.isWinner && <span class="hs-vc__badge">Our Pick ✓</span>}
+    <img
+      src={productB.image}
+      alt={productB.imageAlt}
+      width="120"
+      height="120"
+      loading="lazy"
+    />
+    <h3 class="hs-vc__name">{productB.name}</h3>
+    <p class="hs-vc__bestfor"><strong>Best for:</strong> {productB.bestFor}</p>
+    <AffiliateLink
+      href={productB.affiliateUrl}
+      product={productB.name}
+      class="hs-btn hs-btn--primary hs-btn--block"
+    >
+      Check price on Amazon →
+    </AffiliateLink>
+  </div>
+</div>
+
+<style>
+  .hs-verdictcards {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--space-4);
+    margin-block: var(--space-6);
+  }
+
+  .hs-vc {
+    position: relative;
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3);
+    height: 100%;
+  }
+
+  .hs-vc--winner {
+    border-color: var(--color-primary);
+    border-width: 2px;
+  }
+
+  /* winner badge: top-RIGHT corner */
+  .hs-vc__badge {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-micro);
+    font-weight: var(--font-weight-bold);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--letter-spacing-badge);
+  }
+
+  .hs-vc img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  .hs-vc__name {
+    margin: 0;
+    font-size: var(--font-size-base);
+  }
+
+  .hs-vc__bestfor {
+    margin: 0;
+    font-size: var(--font-size-label);
+    color: var(--color-text-secondary);
+    flex-grow: 1;
+  }
+
+  /* circular "vs" divider */
+  .hs-vc__vs {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg-subtle);
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-caption);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  @media (max-width: 1023px) {
+    .hs-verdictcards {
+      grid-template-columns: 1fr;
+    }
+    .hs-vc__vs {
+      margin-inline: auto;
+    }
+  }
+</style>

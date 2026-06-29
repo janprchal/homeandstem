@@ -1,0 +1,106 @@
+---
+import Base from "@/layouts/Base.astro";
+import ArticleGrid from "@/components/homestem/ArticleGrid.astro";
+import config from "@/config/config.json";
+
+// Shared taxonomy listing page (category / tag). Renders a header + ArticleGrid
+// and emits BreadcrumbList JSON-LD.
+export interface Props {
+  heading: string;
+  description?: string;
+  crumbLabel: string;
+  crumbUrl: string;
+  articles: any[];
+  meta_title?: string;
+}
+const { heading, description, crumbLabel, crumbUrl, articles, meta_title } =
+  Astro.props;
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: config.site.base_url,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: crumbLabel,
+      item: `${config.site.base_url}${crumbUrl}`,
+    },
+  ],
+};
+---
+
+<Base
+  title={heading}
+  meta_title={meta_title}
+  description={description}
+  canonical={`${config.site.base_url}${crumbUrl}`}
+>
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(breadcrumb)}
+    slot="head"
+  />
+  <div class="hs-listing">
+    <nav class="hs-listing__crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a> <span aria-hidden="true">/</span>
+      <span>{crumbLabel}</span>
+    </nav>
+    <header class="hs-listing__head">
+      <h1>{heading}</h1>
+      {description && <p>{description}</p>}
+    </header>
+    {
+      articles.length > 0 ? (
+        <ArticleGrid articles={articles} />
+      ) : (
+        <p class="hs-listing__empty">No articles here yet — check back soon.</p>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .hs-listing {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: var(--space-7) var(--page-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .hs-listing__crumbs {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-label);
+    color: var(--color-text-muted);
+    display: flex;
+    gap: var(--space-2);
+  }
+  .hs-listing__crumbs a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+  .hs-listing__crumbs a:hover {
+    color: var(--color-primary);
+  }
+  .hs-listing__head h1 {
+    font-size: clamp(28px, 4vw, 38px);
+    margin: 0 0 var(--space-3);
+  }
+  .hs-listing__head p {
+    font-size: var(--font-size-h4);
+    color: var(--color-text-secondary);
+    max-width: 640px;
+    margin: 0;
+  }
+  .hs-listing__empty {
+    color: var(--color-text-muted);
+  }
+</style>

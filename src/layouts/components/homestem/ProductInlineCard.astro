@@ -1,0 +1,64 @@
+---
+import AffiliateLink from "@/components/homestem/AffiliateLink.astro";
+
+export interface Props {
+  name: string;
+  image: string;
+  imageAlt: string;
+  affiliateUrl: string;
+  price?: string;
+}
+const { name, image, imageAlt, affiliateUrl, price } = Astro.props;
+---
+
+<div class="hs-inline hs-card">
+  <img src={image} alt={imageAlt} width="72" height="72" loading="lazy" />
+  <div class="hs-inline__body">
+    <div class="hs-inline__name">{name}</div>
+    {price && <div class="hs-inline__price">{price}</div>}
+  </div>
+  <AffiliateLink
+    href={affiliateUrl}
+    product={name}
+    class="hs-btn hs-btn--primary hs-inline__cta"
+  >
+    Check price →
+  </AffiliateLink>
+</div>
+
+<style>
+  .hs-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    margin-block: var(--space-4);
+  }
+  .hs-inline img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+  .hs-inline__body {
+    flex-grow: 1;
+  }
+  .hs-inline__name {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+  .hs-inline__price {
+    font-size: var(--font-size-label);
+    color: var(--color-text-secondary);
+  }
+  @media (max-width: 600px) {
+    .hs-inline {
+      flex-wrap: wrap;
+    }
+    .hs-inline__cta {
+      width: 100%;
+    }
+  }
+</style>

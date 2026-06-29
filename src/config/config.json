@@ -1,14 +1,14 @@
 {
   "site": {
-    "title": "Bookworm Light Astro | Blog Template",
-    "base_url": "https://bookworm-light-astro.vercel.app",
+    "title": "HomeStem | Home & Garden Buying Guides",
+    "base_url": "https://homeandstem.com",
     "base_path": "/",
     "trailing_slash": false,
     "favicon": "/images/favicon.png",
-    "logo": "/images/logo.png",
+    "logo": "",
     "logo_width": "200",
     "logo_height": "34",
-    "logo_text": "Bookworm Light"
+    "logo_text": "HomeStem"
   },
 
   "settings": {
@@ -16,24 +16,21 @@
   },
 
   "metadata": {
-    "meta_author": "Themefisher",
+    "meta_author": "HomeStem",
     "meta_image": "/images/og-image.png",
-    "meta_description": "Bookworm Light Astro Blog Template"
+    "meta_description": "Tested home & garden buying guides and how-tos — indoor plants, balconies, small-space organization, and the yard."
   },
 
   "google_tag_manager": {
     "enable": true,
-    "gtm_id": "GTM-XXXXXX"
+    "gtm_id": "GTM-W9WJKL9T"
   },
 
   "params": {
-    "contact_form_action": "#",
-    "copyright": "Copyright © 2026 a theme by [Themefisher](https://themefisher.com)"
+    "copyright": "© 2026 HomeStem. All rights reserved."
   },
 
   "contactinfo": {
-    "address": "355 S Grand Ave <br/> Los Angeles, CA 90071",
-    "email": "info@bookworm.org",
-    "phone": "+800 567 1234"
+    "email": "homeandstem@gmail.com"
   }
 }

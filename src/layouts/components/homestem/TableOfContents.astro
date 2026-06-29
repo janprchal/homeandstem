@@ -1,0 +1,105 @@
+---
+// Sidebar TOC. Highlights the active section via IntersectionObserver. Collapses
+// behind a toggle on mobile. Depth 2/3 only; H3 indented under H2.
+export interface Props {
+  headings: Array<{ depth: number; text: string; slug: string }>;
+}
+const { headings } = Astro.props;
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  items.length > 0 && (
+    <nav class="hs-toc" aria-label="Table of contents">
+      <details class="hs-toc__wrap" open>
+        <summary class="hs-toc__label">In this article</summary>
+        <ul>
+          {items.map((h) => (
+            <li class={`hs-toc__item hs-toc__item--h${h.depth}`}>
+              <a href={`#${h.slug}`} data-toc-link={h.slug}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </nav>
+  )
+}
+
+<script>
+  const tocDetails = document.querySelector<HTMLDetailsElement>(".hs-toc__wrap");
+  if (tocDetails) {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const syncOpen = () => {
+      tocDetails.open = desktop.matches;
+    };
+    syncOpen();
+    desktop.addEventListener("change", syncOpen);
+  }
+
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"),
+  );
+  const bySlug = new Map(links.map((l) => [l.dataset.tocLink, l]));
+  const headingEls = links
+    .map((l) => document.getElementById(l.dataset.tocLink!))
+    .filter((el): el is HTMLElement => !!el);
+
+  if (headingEls.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            links.forEach((l) => l.classList.remove("is-active"));
+            bySlug.get(entry.target.id)?.classList.add("is-active");
+          }
+        }
+      },
+      { rootMargin: "0px 0px -75% 0px", threshold: 0 },
+    );
+    headingEls.forEach((el) => observer.observe(el));
+  }
+</script>
+
+<style>
+  .hs-toc {
+    font-family: var(--font-heading);
+  }
+  .hs-toc__label {
+    font-size: var(--font-size-caption);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-caps);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    margin-bottom: var(--space-3);
+  }
+  .hs-toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .hs-toc__item a {
+    display: block;
+    font: var(--type-label);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding-left: var(--space-3);
+    border-left: 2px solid transparent;
+  }
+  .hs-toc__item--h3 a {
+    padding-left: var(--space-5);
+    font-size: var(--font-size-caption);
+  }
+  .hs-toc__item a:hover {
+    color: var(--color-primary);
+  }
+  .hs-toc__item a.is-active {
+    color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
+    border-left-color: var(--color-primary);
+  }
+</style>

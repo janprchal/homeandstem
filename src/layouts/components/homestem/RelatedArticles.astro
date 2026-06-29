@@ -1,0 +1,114 @@
+---
+import Badge from "@/components/homestem/Badge.astro";
+
+// End-of-body related articles section (after FAQ, before AffiliateDisclaimer).
+// Desktop: 3-card horizontal row. Mobile: stacked full-width cards.
+// NOT a sidebar widget — see homestem-code-spec.md §4.
+export interface Props {
+  articles: Array<{
+    title: string;
+    slug: string;
+    image: string;
+    imageAlt: string;
+    category: string;
+  }>;
+  heading?: string;
+}
+const { articles, heading = "You might also like" } = Astro.props;
+---
+
+{
+  articles.length > 0 && (
+    <section class="hs-related-body">
+      <h2 class="hs-related-body__heading">{heading}</h2>
+      <div class="hs-related-body__grid">
+        {articles.map((a) => (
+          <a href={`/${a.slug}`} class="hs-related-body__card hs-card">
+            <div class="hs-related-body__media">
+              <img
+                src={a.image}
+                alt={a.imageAlt}
+                width="320"
+                height="240"
+                loading="lazy"
+              />
+            </div>
+            <div class="hs-related-body__info">
+              <Badge label={a.category.replace(/-/g, " ")} />
+              <p class="hs-related-body__title">{a.title}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .hs-related-body {
+    margin-block: var(--space-7);
+  }
+
+  .hs-related-body__heading {
+    font-size: var(--font-size-h3);
+    margin: 0 0 var(--space-5);
+  }
+
+  .hs-related-body__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .hs-related-body__card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+
+  .hs-related-body__card:hover {
+    border-color: var(--color-primary-light);
+  }
+
+  .hs-related-body__media {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .hs-related-body__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hs-related-body__info {
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .hs-related-body__title {
+    margin: 0;
+    width: 100%;
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-label);
+    line-height: var(--line-height-label);
+    color: var(--color-text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 1023px) {
+    .hs-related-body__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

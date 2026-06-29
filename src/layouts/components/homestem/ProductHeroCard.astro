@@ -1,0 +1,121 @@
+---
+import AffiliateLink from "@/components/homestem/AffiliateLink.astro";
+import Badge from "@/components/homestem/Badge.astro";
+import StarRating from "@/components/homestem/StarRating.astro";
+
+// Primary product card. Image left / content right on desktop, stacked on
+// mobile. CTA is the conversion target. See homestem-code-spec.md §5.
+export interface Props {
+  name: string;
+  image: string;
+  imageAlt: string;
+  affiliateUrl: string;
+  rating: number;
+  price: string;
+  badge?: string;
+  reviewCount?: number;
+}
+const {
+  name,
+  image,
+  imageAlt,
+  affiliateUrl,
+  rating,
+  price,
+  badge,
+  reviewCount,
+} = Astro.props;
+---
+
+<div class="hs-card hs-phc">
+  <div class="hs-phc__media">
+    {badge && <Badge label={badge} class="hs-phc__badge" />}
+    <img src={image} alt={imageAlt} width="200" height="200" loading="lazy" />
+  </div>
+  <div class="hs-phc__body">
+    <h3 class="hs-phc__name">{name}</h3>
+    <div class="hs-phc__meta">
+      <StarRating rating={rating} reviewCount={reviewCount} />
+      <span class="hs-phc__price">{price}</span>
+    </div>
+    <span class="hs-phc__price-note">Price may vary. Check Amazon for current price.</span>
+    <AffiliateLink
+      href={affiliateUrl}
+      product={name}
+      class="hs-btn hs-btn--primary hs-phc__cta"
+    >
+      Check price on Amazon →
+    </AffiliateLink>
+  </div>
+</div>
+
+<style>
+  .hs-phc {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    align-items: stretch;
+    gap: var(--space-5);
+    padding: var(--space-5);
+    margin-block: var(--space-5);
+    transition: border-color 0.15s ease;
+  }
+  .hs-phc:hover {
+    border-color: var(--color-primary-light);
+  }
+  .hs-phc__media {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  .hs-phc__media img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+  .hs-phc__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    height: 100%;
+  }
+  .hs-phc__cta {
+    margin-top: auto;
+  }
+  .hs-phc__name {
+    font-size: var(--font-size-h3);
+    margin: 0;
+  }
+  .hs-phc__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .hs-phc__price {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-h4);
+    color: var(--color-text-primary);
+  }
+  .hs-phc__price-note {
+    font-size: var(--font-size-label-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-label);
+  }
+  @media (max-width: 1023px) {
+    .hs-phc {
+      grid-template-columns: 1fr;
+    }
+    .hs-phc__media img {
+      width: 100%;
+      height: auto;
+      max-height: 240px;
+      object-fit: cover;
+    }
+    .hs-phc__cta {
+      width: 100%;
+    }
+  }
+</style>

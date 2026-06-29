@@ -1,0 +1,147 @@
+---
+import AffiliateLink from "@/components/homestem/AffiliateLink.astro";
+import StarRating from "@/components/homestem/StarRating.astro";
+
+export interface Props {
+  products: Array<{
+    rank: number;
+    name: string;
+    affiliateUrl: string;
+    price: string;
+    rating: number;
+    bestFor: string;
+  }>;
+}
+const { products } = Astro.props;
+const rows = [...products].sort((a, b) => a.rank - b.rank);
+---
+
+<div class="hs-ctable-wrap">
+  <div class="hs-ctable hs-card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Product</th>
+          <th>Best for</th>
+          <th>Rating</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((p) => (
+            <tr class={p.rank === 1 ? "hs-ctable__row--top" : ""}>
+              <td class="hs-ctable__rank">{p.rank}</td>
+              <td class="hs-ctable__name">
+                <AffiliateLink
+                  href={p.affiliateUrl}
+                  product={p.name}
+                  class="hs-ctable__link"
+                >
+                  {p.name} ↗
+                </AffiliateLink>
+              </td>
+              <td>{p.bestFor}</td>
+              <td>
+                <StarRating rating={p.rating} />
+              </td>
+              <td class="hs-ctable__price">{p.price}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="hs-ctable-wrap__hint" aria-hidden="true">→ Swipe table to see all columns</p>
+</div>
+
+<style>
+  .hs-ctable-wrap {
+    margin-block: var(--space-6);
+    overflow-x: auto;
+    /* Webkit momentum scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hs-ctable {
+    /* Fixed width ensures the table scrolls instead of compressing on mobile */
+    min-width: 600px;
+    /* Clip the table's square corners to the card's rounded radius — without
+       this, the header's border-bottom floats above visible white corners
+       poking out past the rounded border. */
+    overflow: hidden;
+  }
+
+  .hs-ctable table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-body-sm);
+  }
+
+  .hs-ctable thead th {
+    text-align: left;
+    font-family: var(--font-heading);
+    font-size: var(--font-size-caption);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-label);
+    color: var(--color-text-muted);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  .hs-ctable tbody td {
+    padding: var(--space-3) var(--space-4);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .hs-ctable tbody tr:nth-child(even) td {
+    background-color: var(--color-bg-subtle);
+  }
+
+  /* Highlight the #1 row with a left border accent */
+  .hs-ctable__row--top td:first-child {
+    border-left: 3px solid var(--color-primary);
+  }
+
+  .hs-ctable__rank {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    white-space: nowrap;
+  }
+
+  .hs-ctable__link {
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+  }
+  .hs-ctable__link:hover {
+    text-decoration: underline;
+  }
+
+  .hs-ctable__price {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+  }
+
+  /* Swipe hint — only shows on mobile when table overflows */
+  .hs-ctable-wrap__hint {
+    display: none;
+    font-size: var(--font-size-label-sm);
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    margin-top: var(--space-2);
+    text-align: right;
+  }
+
+  @media (max-width: 1023px) {
+    .hs-ctable-wrap__hint {
+      display: block;
+    }
+  }
+</style>

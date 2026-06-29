@@ -3,7 +3,9 @@ html {
 }
 
 body {
-  @apply bg-body font-primary font-normal leading-relaxed text-text;
+  @apply bg-body font-secondary font-normal text-text;
+  line-height: var(--line-height-body);
+  text-wrap: pretty;
 }
 
 h1,
@@ -12,35 +14,94 @@ h3,
 h4,
 h5,
 h6 {
-  @apply font-primary font-bold leading-tight text-dark;
+  @apply font-primary text-dark;
+  text-wrap: balance;
 }
 
-h1,
+/* Use the --type-* composite tokens (size+weight+line-height+family in one
+   declaration) instead of the legacy Bookworm-theme text-h1/h2/h3 Tailwind
+   utilities below — those render h2/h3 ~40-50% larger than the design
+   tokens call for, which is why headings looked oversized and heavy
+   (size compounds the perceived weight even at medium 500). H1 has no
+   --type-h1 token since it's always a hero-banner treatment with its own
+   component-level override (homepage/article hero, ProsePage); the size
+   here is just a sane fallback. */
+h1 {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-heading);
+}
+
+h2 {
+  font: var(--type-h2);
+}
+
+h3 {
+  font: var(--type-h3);
+}
+
+h4,
+h5,
+h6 {
+  font: var(--type-h4);
+}
+
+/* Vertical rhythm for plain MDX prose (headings/paragraphs/lists typed
+   directly in article bodies, e.g. "## What to Look For" + "### Criteria" +
+   plain text). These have no component wrapper to carry margin-block like
+   ProductHeroCard/ProsConsList/etc. do, so without explicit rules here they
+   render with zero space between them. Scale matches the 24/32/48 rhythm
+   already used by article components. */
+.hs-article__content p,
+.hs-article__content ul,
+.hs-article__content ol {
+  margin: 0 0 var(--space-4);
+}
+
+.hs-article__content h2 {
+  margin: var(--space-6) 0 var(--space-3);
+}
+
+.hs-article__content h3 {
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+.hs-article__content h4 {
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+.hs-article__content ul,
+.hs-article__content ol {
+  padding-left: var(--space-5);
+}
+
+.hs-article__content li + li {
+  margin-top: var(--space-1);
+}
+
+/* .h1-.h6 utility classes (for manual size overrides, e.g. 404.astro) keep
+   the legacy Bookworm-theme scale — only the bare h1-h6 *elements* above
+   were repointed to the HomeStem --type-* tokens. */
 .h1 {
   @apply text-h1-sm md:text-h1;
 }
 
-h2,
 .h2 {
   @apply text-h2-sm md:text-h2;
 }
 
-h3,
 .h3 {
   @apply text-h3-sm md:text-h3;
 }
 
-h4,
 .h4 {
   @apply text-h4;
 }
 
-h5,
 .h5 {
   @apply text-h5;
 }
 
-h6,
 .h6 {
   @apply text-h6;
 }

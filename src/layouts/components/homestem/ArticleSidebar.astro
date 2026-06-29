@@ -1,0 +1,74 @@
+---
+import EditorsPick from "@/components/homestem/EditorsPick.astro";
+import TableOfContents from "@/components/homestem/TableOfContents.astro";
+import VerdictMini from "@/components/homestem/VerdictMini.astro";
+import WhatYouNeedList from "@/components/homestem/WhatYouNeedList.astro";
+import { getProduct } from "@/lib/products";
+
+// Sidebar = TOC + one type-specific widget. RelatedArticles is in the article
+// BODY (after FAQ, before disclaimer) — not here. See homestem-code-spec.md §4.
+//
+//   listicle / buying-guide → TOC + EditorsPick
+//   comparison              → TOC + VerdictMini (both products)
+//   how-to                  → TOC + WhatYouNeedMini
+export interface Props {
+  type: "listicle" | "buying-guide" | "comparison" | "how-to";
+  headings: Array<{ depth: number; text: string; slug: string }>;
+  editorsPick?: string;
+  compareProducts?: string[];
+  essentials?: Array<{ name: string; estimatedCost?: string; affiliateUrl?: string }>;
+}
+const { type, headings, editorsPick, compareProducts, essentials } =
+  Astro.props;
+
+const pick = await getProduct(editorsPick);
+const productA = await getProduct(compareProducts?.[0]);
+const productB = await getProduct(compareProducts?.[1]);
+---
+
+<TableOfContents headings={headings} />
+
+{
+  (type === "listicle" || type === "buying-guide") && pick && (
+    <EditorsPick
+      name={pick.name}
+      image={pick.image}
+      imageAlt={pick.imageAlt}
+      affiliateUrl={pick.affiliateUrl}
+      price={pick.price}
+    />
+  )
+}
+
+{
+  type === "comparison" && (productA || productB) && (
+    <VerdictMini
+      productA={
+        productA
+          ? {
+              name: productA.name,
+              image: productA.image,
+              imageAlt: productA.imageAlt,
+              affiliateUrl: productA.affiliateUrl,
+            }
+          : undefined
+      }
+      productB={
+        productB
+          ? {
+              name: productB.name,
+              image: productB.image,
+              imageAlt: productB.imageAlt,
+              affiliateUrl: productB.affiliateUrl,
+            }
+          : undefined
+      }
+    />
+  )
+}
+
+{
+  type === "how-to" && essentials && essentials.length > 0 && (
+    <WhatYouNeedList items={essentials} variant="mini" heading="Quick supply list" />
+  )
+}

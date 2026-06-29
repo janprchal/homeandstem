@@ -1,0 +1,189 @@
+---
+import AffiliateLink from "@/components/homestem/AffiliateLink.astro";
+
+export interface Props {
+  productA: { name: string; affiliateUrl: string; image: string };
+  productB: { name: string; affiliateUrl: string; image: string };
+  criteria: Array<{
+    label: string;
+    valueA: string;
+    valueB: string;
+    winner: "A" | "B" | "tie";
+  }>;
+  overallWinner: "A" | "B";
+}
+const { productA, productB, criteria, overallWinner } = Astro.props;
+---
+
+<div class="hs-h2h-wrap">
+  <div class="hs-h2h hs-card">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th class={`hs-h2h__col${overallWinner === "A" ? " hs-h2h__win" : ""}`}>
+            <div class="hs-h2h__head">
+              <img
+                src={productA.image}
+                alt={productA.name}
+                width="40"
+                height="40"
+                loading="lazy"
+              />
+              <AffiliateLink
+                href={productA.affiliateUrl}
+                product={productA.name}
+                class="hs-h2h__namelink"
+              >
+                {productA.name}
+              </AffiliateLink>
+            </div>
+          </th>
+          <th class={`hs-h2h__col${overallWinner === "B" ? " hs-h2h__win" : ""}`}>
+            <div class="hs-h2h__head">
+              <img
+                src={productB.image}
+                alt={productB.name}
+                width="40"
+                height="40"
+                loading="lazy"
+              />
+              <AffiliateLink
+                href={productB.affiliateUrl}
+                product={productB.name}
+                class="hs-h2h__namelink"
+              >
+                {productB.name}
+              </AffiliateLink>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          criteria.map((c) => (
+            <tr>
+              <th scope="row">{c.label}</th>
+              <td class={c.winner === "A" ? "hs-h2h__win" : ""}>{c.valueA}</td>
+              <td class={c.winner === "B" ? "hs-h2h__win" : ""}>{c.valueB}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+      <tfoot>
+        <tr class="hs-h2h__verdict">
+          <th scope="row">Overall verdict</th>
+          <td
+            colspan="2"
+            class={`hs-h2h__verdict-cell${overallWinner === "A" ? " hs-h2h__win" : ""}`}
+          >
+            {overallWinner === "A" ? productA.name : productB.name} wins
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <p class="hs-h2h-wrap__hint" aria-hidden="true">→ Swipe table to see all columns</p>
+</div>
+
+<style>
+  .hs-h2h-wrap {
+    margin-block: var(--space-6);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hs-h2h {
+    min-width: 560px;
+    /* Clip the table's square corners to the card's rounded radius — see
+       the matching note in ComparisonTable.astro. */
+    overflow: hidden;
+  }
+
+  .hs-h2h table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-body-sm);
+  }
+
+  .hs-h2h th,
+  .hs-h2h td {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Product column headers: thumbnail + name stacked */
+  .hs-h2h__col {
+    vertical-align: top;
+  }
+
+  .hs-h2h__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .hs-h2h__head img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+  }
+
+  .hs-h2h__namelink {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  .hs-h2h__namelink:hover {
+    text-decoration: underline;
+  }
+
+  .hs-h2h tbody th[scope="row"] {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-label);
+    white-space: nowrap;
+  }
+
+  .hs-h2h__win {
+    background-color: var(--color-primary-bg);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  /* Overall verdict row */
+  .hs-h2h__verdict th {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-label);
+    border-bottom: none;
+    border-top: 2px solid var(--color-border);
+  }
+  .hs-h2h__verdict-cell {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    border-bottom: none;
+    border-top: 2px solid var(--color-border);
+  }
+
+  .hs-h2h-wrap__hint {
+    display: none;
+    font-size: var(--font-size-label-sm);
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    margin-top: var(--space-2);
+    text-align: right;
+  }
+
+  @media (max-width: 1023px) {
+    .hs-h2h-wrap__hint {
+      display: block;
+    }
+  }
+</style>

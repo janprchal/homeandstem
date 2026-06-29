@@ -1,0 +1,90 @@
+---
+import AffiliateLink from "@/components/homestem/AffiliateLink.astro";
+
+// Tools/materials checklist. `full` = in-body section; `mini` = sidebar widget.
+export interface Props {
+  items: Array<{
+    name: string;
+    estimatedCost?: string;
+    affiliateUrl?: string;
+    category?: "tool" | "material";
+  }>;
+  variant?: "full" | "mini";
+  heading?: string;
+}
+const { items, variant = "full", heading = "What you'll need" } = Astro.props;
+---
+
+<div class={`hs-wyn hs-wyn--${variant}`}>
+  <h3 class="hs-wyn__label">{heading}</h3>
+  <ul>
+    {
+      items.map((it) => (
+        <li>
+          <span class="hs-wyn__name">{it.name}</span>
+          {it.estimatedCost && (
+            <span class="hs-wyn__cost">{it.estimatedCost}</span>
+          )}
+          {it.affiliateUrl && (
+            <AffiliateLink
+              href={it.affiliateUrl}
+              product={it.name}
+              class="hs-textlink hs-wyn__link"
+            >
+              View →
+            </AffiliateLink>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .hs-wyn--full {
+    background-color: var(--color-bg-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    margin-block: var(--space-5);
+  }
+  .hs-wyn__label {
+    font-family: var(--font-heading);
+    margin: 0 0 var(--space-3);
+  }
+  .hs-wyn--mini .hs-wyn__label {
+    font-size: var(--font-size-caption);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-caps);
+    color: var(--color-text-muted);
+  }
+  .hs-wyn ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .hs-wyn li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--font-size-body-sm);
+  }
+  .hs-wyn li:last-child {
+    border-bottom: 0;
+  }
+  .hs-wyn--mini li {
+    font-size: var(--font-size-label);
+  }
+  .hs-wyn__name {
+    flex-grow: 1;
+    color: var(--color-text-primary);
+  }
+  .hs-wyn__cost {
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-caption);
+  }
+</style>
