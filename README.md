@@ -1,116 +1,62 @@
-<h1 align=center>Bookworm Light Astro</h1>
-<p align=center>Bookworm Light is a feature-rich, minimal, highly customizable, easy-to-use free Astro blog theme.</p>
-<h2 align="center"> <a target="_blank" href="https://bookworm-light-astro.vercel.app/" rel="nofollow">👀Demo</a> | <a  target="_blank" href="https://pagespeed.web.dev/report?url=https%3A%2F%2Fbookworm-light-astro.vercel.app%2F&form_factor=desktop">Page Speed (100%)🚀</a>
-</h2>
+<h1 align="center">HomeStem</h1>
+<p align="center">Tested home &amp; garden buying guides and how-tos — indoor plants, balconies, small-space organization, and the yard.</p>
+<p align="center"><a href="https://homeandstem.com">homeandstem.com</a></p>
 
-<p align=center>
-  <a href="https://github.com/withastro/astro/releases/tag/astro%406.1.9" alt="Contributors">
-    <img src="https://img.shields.io/static/v1?label=ASTRO&message=6.1.9&color=000&logo=astro" />
-  </a>
+## About
 
-  <a href="https://github.com/themefisher/bookworm-light-astro/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/themefisher/bookworm-light-astro" alt="license"></a>
+HomeStem is an English-language affiliate content site in the Home & Garden niche, monetized via the Amazon Associates program. Traffic flow is **Pinterest → Blog → Amazon**: articles are written to rank on Pinterest and search, and recommend specific products via tracked Amazon links.
 
-  <img src="https://img.shields.io/github/languages/code-size/themefisher/bookworm-light-astro" alt="code size">
+The site is a statically generated [Astro](https://astro.build) build with content authored in MDX and product data in YAML, deployed to Netlify and Cloudflare Workers.
 
-  <a href="https://github.com/themefisher/bookworm-light-astro/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/themefisher/bigspring-light-astro" alt="contributors"></a>
-</p>
+## Stack
 
-![bookworm-light](https://assets.teamosis.com/thumbs/bookworm-light.png)
+- **Astro 6** (static site generation)
+- **React** for interactive islands
+- **Tailwind CSS v4**
+- **MDX** for article bodies, auto-imported HomeStem components
+- Content collections: `articles` (MDX) and `products` (YAML)
 
-Bookworm Light is a minimal multi-author free Astro blog theme which is perfect for any kind of blog website. Whether you're interested in food, beauty, travel, photography, lifestyle, fitness, health, or other topics, this theme is a great fit. The theme is super fast and SEO friendly which makes it easier for your content to be discovered by search engines.
+## Getting started
 
-## 🔑Key Features
+Requires [Node.js](https://nodejs.org/en/download/) (LTS recommended) and Yarn.
 
-- 🎨 Highly Customizable (Color, Font, Menu, Social Links, SEO Meta Tags, etc.)
-- 👥 Multi-Author Support
-- 📚 Authors Page
-- 👤 Author Single Page
-- 🔍 Search Functionality with FuseJS
-- 🏷️ Tags and Categories Support
-- 📲 Post Social Share Option
-- 🔗 Similar Post Suggestions
-- ⚡ Fast by Default (95+ Google PageSpeed Score)
-- ⚙️ Netlify Settings Pre-configured
-- 📬 Contact Form Support
-- 🌅 Support OG Image
-- ✍️ Write and Update Content in Markdown / MDX
-- 📚 MDX Components Auto Import
-- 📝 Includes Draft Pages and Posts
-- 🚀 Built with Tailwind CSS Framework
-- 📱 Fully Responsive on Desktops, Tablets, and Smartphones
-- 🔍 SEO Friendly
-
-<!-- installation -->
-
-## 🔧Installation
-
-After downloading the template, you have some prerequisites to install. Then you can run it on your localhost. You can view the package.json file to see which scripts are included.
-
-### ⚙️Install prerequisites (once for a machine)
-
-- **Node Installation:** [Install node js](https://nodejs.org/en/download/) [Recommended LTS version]
-
-### 🖥️Local setup
-
-After successfully installing those dependencies, open this template with any IDE [[VS Code](https://code.visualstudio.com/) recommended], and then open the integrated terminal in your editor [VS Code shortcut <code>ctrl/cmd+\`</code>]
-
-- Install dependencies
-
-```
+```sh
 yarn install
-```
-
-- Run locally
-
-```
 yarn dev
 ```
 
-After that, it will open up a preview of the template in your default browser, watch for changes to source files, and live-reload the browser when changes are saved.
+This starts a local dev server and live-reloads on changes to source files.
 
-## 🔨Production Build
+### Other scripts
 
-After finishing all the customization, you can create a production build by running this command.
-
+```sh
+yarn build      # production build
+yarn preview    # preview the production build locally
+yarn check      # astro check (type checking)
+yarn format     # prettier -w .
 ```
-yarn build
-```
 
-<!-- edit with sitepins -->
+## Deployment
 
-## 📝 Edit Content with CMS
+- **Netlify** — configured via `netlify.toml`
+- **Cloudflare Workers** — `wrangler.jsonc`, deploy with `yarn deploy:cf-workers`
 
-This template comes pre-configured with [**Sitepins**](https://sitepins.com/?aff=tfgithub), a Git-based Headless CMS designed for seamless content management. You can update your website’s text, images, and configuration without touching a single line of code.
+## Content
 
-**How to get started:**
+- Articles live in `src/content/articles/` (MDX, one of four fixed article types — buying guide, comparison, how-to, or listicle — per `docs/homestem-code-spec.md`).
+- Products referenced by articles (sidebar picks, comparison tables) live in `src/content/products/` (one YAML file per product).
+- Affiliate link rules (tag param, `rel`/`target`, disclosure requirements, dataLayer tracking) are centralized in `src/lib/utils/affiliate.ts` and `AffiliateLink.astro` — see `CLAUDE.md` for the full list.
 
-Click the Edit with Sitepins button below and follow the on-screen instructions to start editing your content visually.
+## Docs
 
-  <a target="_blank" href="https://app.sitepins.com/new/clone?name=Bookworm%20Light%20Astro&repository=https://github.com/themefisher/bookworm-light-astro/?aff=tfgithub">
-    <img src="https://sitepins.com/button.svg" alt="Edit with Sitepins">
-  </a>
-  
-<!-- reporting issue -->
+Project-specific specs and conventions live in `docs/`:
 
-## 🐞Reporting Issues
+- `docs/homestem-code-spec.md` — content schema, article-type templates, component conventions
+- `docs/homestem-design-spec.md` — design tokens, layout, typography
+- `docs/figma-handoff.md` — Figma → code handoff notes
 
-We use GitHub Issues as the official bug tracker for this Template. Please Search [existing issues](https://github.com/themefisher/bookworm-light-astro/issues). It’s possible someone has already reported the same problem.
-If your problem or idea has not been addressed yet, feel free to [open a new issue](https://github.com/themefisher/bookworm-light-astro/issues).
+`CLAUDE.md` has a more detailed architecture overview and the non-negotiable affiliate-link rules.
 
-<!-- licence -->
+## License
 
-## 📄License
-
-Copyright (c) 2023 - Present, Designed & Developed by [Themefisher](https://themefisher.com)
-
-**Code License:** Released under the [MIT](https://github.com/themefisher/bookworm-light-astro/blob/main/LICENSE) license.
-
-**Image license:** The images are only for demonstration purposes. They have their license, we don't have permission to share those images.
-
-## 👨‍💻Need Custom Development Services?
-
-Besides developing beautifully designed and blazing-fast themes, we help businesses create fast, performance-focused, scalable & secure websites based on NextJs, Hugo, Astro, etc.
-
-If you need a custom theme, theme customization, or complete website development services from scratch you can [Hire Us](https://themefisher.com/contact).
+Code released under the [MIT](./LICENSE) license.

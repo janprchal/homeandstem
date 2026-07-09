@@ -29,7 +29,7 @@ This repo contains the Astro site. It started from the **bookworm-light-astro v4
 - **ComparisonTable** — `th` border-bottom uses `1px solid var(--color-border)` (standard, not green primary).
 - **RelatedArticles** — `.hs-related-body__info` uses `align-items: flex-start` so the badge shrinks to content width; `.hs-related-body__title` has `width: 100%` to preserve full-width line-clamping.
 
-The full project spec lives in the parent project folder (`../files/`, not part of this repo); the code-focused brief is copied into this repo at `docs/homestem-code-spec.md`. When the two disagree, the spec is the source of truth for the *target*; this file describes what the code *currently* does.
+Dev and design docs live in this repo at `docs/` — `homestem-code-spec.md`, `homestem-design-spec.md`, `figma-handoff.md` — these are the single master copies (no external sync). The content spec (article structures, SEO — overall source of truth) lives outside the repo at `../articles/spec.md`. When docs disagree, the spec describes the *target*; this file describes what the code *currently* does.
 
 ---
 
