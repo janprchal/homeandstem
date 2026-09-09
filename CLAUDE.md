@@ -47,6 +47,24 @@ yarn format     # prettier -w .
 
 Deploy targets: Netlify (`netlify.toml`) and Cloudflare Workers (`wrangler.jsonc`, `yarn deploy:cf-workers`).
 
+**Never run `npm install` / `yarn install` / `rm -rf node_modules` directly in this repo when working
+through the Cowork device bridge (`device_bash`).** That tool runs in an isolated Linux VM, but the
+connected project folder is the *same physical folder* as Honza's real Mac — not a copy. `node_modules`
+contains OS-specific compiled binaries (notably `@rollup/rollup-*`), so a reinstall from the Linux VM
+writes Linux/arm64 binaries into the shared folder and silently breaks `yarn dev` next time Honza runs it
+natively on macOS. This has happened more than once (2026-09-09).
+
+If a build check is needed from inside a Cowork session: clone the repo into the VM's own home directory,
+**outside** the mounted folder (e.g. `~/build-check/homeandstem`, not under `$HOME/mnt/...`), and
+`npm install` / build there instead. That keeps a separate, disposable `node_modules` that never touches
+Honza's Mac. Only copy back the actual content changes (`.mdx`, `.yaml`, images) into the real repo — never
+`node_modules` or lockfile changes made by that isolated install.
+
+If `node_modules` in the real (mounted) repo ever needs fixing after this kind of mismatch, the correct
+fix is to delete it there (`rm -rf node_modules package-lock.json`) and leave it deleted — let Honza run
+`yarn install` himself next time he opens the project locally, so the native binaries match his actual
+machine.
+
 ---
 
 ## Architecture
