@@ -81,11 +81,11 @@
   display: inline-flex;
   align-items: center;
   padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background-color: var(--color-bg-subtle);
   color: var(--color-text-secondary);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-caption);
+  font: var(--type-label-sm);
+  letter-spacing: var(--letter-spacing-badge);
   text-decoration: none;
 }
 .hs-tag:hover {
