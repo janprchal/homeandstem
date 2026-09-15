@@ -30,7 +30,6 @@ const typeLabels: Record<string, string> = {
   "how-to": "How-To",
 };
 
-const authorLabel = author ?? "the HomeStem Team";
 ---
 
 <header class="hs-hero">
@@ -51,7 +50,7 @@ const authorLabel = author ?? "the HomeStem Team";
       </div>
       <h1 class="hs-hero__title">{title}</h1>
       <p class="hs-hero__meta">
-        By {authorLabel}{readTime && <> · {readTime}</>} · Updated {
+        {readTime && <>{readTime} · </>}Updated {
           dateFormat(pubDate)
         }
       </p>

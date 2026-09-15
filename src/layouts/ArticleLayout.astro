@@ -3,7 +3,6 @@ import ArticleBase from "@/layouts/ArticleBase.astro";
 import AffiliateDisclaimer from "@/components/homestem/AffiliateDisclaimer.astro";
 import ArticleHero from "@/components/homestem/ArticleHero.astro";
 import ArticleSidebar from "@/components/homestem/ArticleSidebar.astro";
-import AuthorBox from "@/components/homestem/AuthorBox.astro";
 import RelatedArticles from "@/components/homestem/RelatedArticles.astro";
 import config from "@/config/config.json";
 import readingTime from "@/lib/utils/readingTime";
@@ -11,8 +10,10 @@ import readingTime from "@/lib/utils/readingTime";
 // Composed article page. The body composition (which product/article components
 // appear, in what order) is authored per type in the MDX itself, following the
 // fixed templates in homestem-code-spec.md §4. This layout owns the shell:
-// hero, sidebar widget set (per type), author E-E-A-T box, disclaimer, and SEO
-// JSON-LD.
+// hero, sidebar widget set (per type), disclaimer, and SEO JSON-LD.
+// Author box (AuthorBox.astro) is hidden for now (2026-09-15) -- solo-author site,
+// no real editorial team yet, so a card claiming one reads as misleading. Bring it
+// back once there's more than one named contributor with an actual bio worth showing.
 export interface Props {
   article: any;
   headings: Array<{ depth: number; text: string; slug: string }>;
@@ -76,14 +77,6 @@ const articleSchema = {
   <RelatedArticles articles={related} />
 
   {data.affiliate && <AffiliateDisclaimer />}
-  {
-    author && (
-      <AuthorBox
-        name={author}
-        bio="HomeStem's editorial team tests home & garden gear so you can buy with confidence."
-      />
-    )
-  }
 
   <Fragment slot="sidebar">
     <ArticleSidebar
