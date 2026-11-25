@@ -43,6 +43,11 @@ const { name, image, imageAlt, affiliateUrl, price } = Astro.props;
   }
   .hs-inline__body {
     flex-grow: 1;
+    min-width: 0;
+  }
+  .hs-inline__cta {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .hs-inline__name {
     font-family: var(--font-heading);
